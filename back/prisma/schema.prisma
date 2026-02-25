@@ -1,0 +1,124 @@
+// -------------------------------------------------------
+// Datasource & Generator
+// -------------------------------------------------------
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------------
+// ACCOUNT
+// -------------------------------------------------------
+
+model account {
+  id              String   @id @default(uuid())
+  username        String   @db.VarChar(50)
+  mail            String   @db.VarChar(255)
+  password        String   @db.VarChar(255)
+  avatar          String?  // URL
+  created_at      DateTime? @db.Timestamptz(6)
+  last_connection DateTime? @db.Timestamptz(6)
+  statut_account  String?
+
+  users users[]
+}
+
+// -------------------------------------------------------
+// USERS
+// -------------------------------------------------------
+
+model users {
+  id                  String   @id @default(uuid())
+  id_account          String
+  gender              String?
+  birthdate           DateTime? @db.Date
+  height_cm           Int?
+  weight_kg           Decimal?  @db.Decimal(10, 2)
+  training_experience String?
+  sport               String?
+  main_goal           String?
+  week_availability   Int?
+  equipment           String?
+  health              String?
+  sleep               String?
+  stress              String?
+  load                String?
+  recovery            String?
+
+  account account @relation(fields: [id_account], references: [id])
+
+  session         session[]
+  before_session  before_session[]
+  injuries        injuries[]
+}
+
+// -------------------------------------------------------
+// EXERCICE
+// -------------------------------------------------------
+
+model exercice {
+  id             String   @id @default(uuid())
+  name           String   @db.VarChar(50)
+  duration       Int?
+  category       String   @db.VarChar(50)
+  muscle_groups  String?
+  equipment      String?
+  animation_url  String?
+  order_index    Int?
+
+  session session[]
+}
+
+// -------------------------------------------------------
+// SESSION
+// -------------------------------------------------------
+
+model session {
+  id              String   @id @default(uuid())
+  exercice_id     String
+  user_id         String
+  exercice_order  Int?
+  name            String?
+  duration        Int?
+  intensity       String?
+  rpe_goal        Int?
+  tags            String?
+  date            DateTime? @db.Timestamptz(6)
+  status          String?
+
+  exercice exercice @relation(fields: [exercice_id], references: [id])
+  users    users    @relation(fields: [user_id], references: [id])
+}
+
+// -------------------------------------------------------
+// BEFORE SESSION (readiness du jour)
+// -------------------------------------------------------
+
+model before_session {
+  id            String   @id @default(uuid())
+  user_id       String
+  muscle_groups String?
+  tiredness     Int?
+  pain_level    Int?
+  stress_level  Int?
+  intensity     Int?
+  ai_advice     String?
+
+  users users @relation(fields: [user_id], references: [id])
+}
+
+// -------------------------------------------------------
+// INJURIES
+// -------------------------------------------------------
+
+model injuries {
+  id            String   @id @default(uuid())
+  user_id       String
+  muscle_groups String?
+  pain_level    Int?
+
+  users users @relation(fields: [user_id], references: [id])
+}

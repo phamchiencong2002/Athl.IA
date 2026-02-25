@@ -1,0 +1,18 @@
+services:
+  frontend:
+    build: .
+    container_name: athlia-front
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19006:19006"
+    volumes:
+      - ./athli-app:/app/athli-app
+      - /app/athli-app/node_modules
+    environment:
+      - NODE_ENV=development
+      - EXPO_PUBLIC_HOST=localhost
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
