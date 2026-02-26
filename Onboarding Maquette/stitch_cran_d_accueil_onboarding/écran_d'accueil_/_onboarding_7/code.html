@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Athli.AI - Onboarding Motivation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3B82F6",
+            "secondary": "#7C3AED",
+            "accent": "#10B981",
+            "background-light": "#F9FAFB",
+            "background-dark": "#111827", // Adjusted for better contrast if needed
+            "text-light": "#1E293B",
+            "text-dark": "#F9FAFB",
+            "card-light": "#FFFFFF",
+            "card-dark": "#374151"
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "1rem", // 16px
+            "lg": "1.5rem", // 24px
+            "xl": "2rem", // 32px
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body {
+      min-height: 100dvh;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="relative flex h-full min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<main class="flex flex-col flex-grow p-6 sm:p-8">
+<div class="w-full pt-8">
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 50%"></div>
+</div>
+<div class="flex justify-between text-xs mt-2 text-gray-500 dark:text-gray-400">
+<span>Objectif</span>
+<span>Habitudes</span>
+<span>Finalisation</span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center flex-grow text-center py-10">
+<h1 class="text-3xl sm:text-4xl font-bold tracking-tight leading-tight max-w-md">Combien de fois veux-tu t’entraîner par semaine ?</h1>
+<div class="w-full max-w-xs mx-auto mt-12 grid grid-cols-2 gap-4">
+<div class="group cursor-pointer rounded-xl bg-card-light dark:bg-card-dark p-6 flex flex-col items-center justify-center aspect-square shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:border-primary dark:hover:border-primary">
+<span class="text-5xl font-extrabold text-text-light dark:text-text-dark">2x</span>
+<span class="text-gray-500 dark:text-gray-400 mt-1">/ semaine</span>
+</div>
+<div class="group cursor-pointer rounded-xl bg-primary p-6 flex flex-col items-center justify-center aspect-square shadow-lg shadow-primary/30 border-2 border-primary transition-all duration-200 ring-4 ring-primary/20">
+<span class="text-5xl font-extrabold text-white">3x</span>
+<span class="text-blue-200 mt-1">/ semaine</span>
+</div>
+<div class="group cursor-pointer rounded-xl bg-card-light dark:bg-card-dark p-6 flex flex-col items-center justify-center aspect-square shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:border-primary dark:hover:border-primary">
+<span class="text-5xl font-extrabold text-text-light dark:text-text-dark">4x</span>
+<span class="text-gray-500 dark:text-gray-400 mt-1">/ semaine</span>
+</div>
+<div class="group cursor-pointer rounded-xl bg-card-light dark:bg-card-dark p-6 flex flex-col items-center justify-center aspect-square shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:border-primary dark:hover:border-primary">
+<span class="text-5xl font-extrabold text-text-light dark:text-text-dark">5x</span>
+<span class="text-gray-500 dark:text-gray-400 mt-1">/ semaine</span>
+</div>
+</div>
+</div>
+<div class="w-full flex flex-col items-center gap-6 pb-4 pt-4">
+<div class="flex px-4 py-3 justify-center w-full max-w-sm">
+<button class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 flex-1 bg-primary text-white text-lg font-bold leading-normal tracking-wide shadow-lg shadow-primary/30 hover:bg-opacity-90 transition-all duration-200">
+<span class="truncate">Continuer</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

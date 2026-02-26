@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Athli.AI - Informations de base</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3B82F6",
+                        "secondary": "#7C3AED",
+                        "accent": "#10B981",
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#111827",
+                        "text-light": "#1E293B",
+                        "text-dark": "#F9FAFB",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1F2937",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#374151"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem", // 16px
+                        "lg": "1.5rem", // 24px
+                        "xl": "2rem", // 32px
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #E5E7EB;
+            border-radius: 9999px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        .dark input[type="range"] {
+            background: #4B5563;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #3B82F6;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 4px solid #F9FAFB;
+        }
+        .dark input[type="range"]::-webkit-slider-thumb {
+            border-color: #1F2937;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #3B82F6;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 4px solid #F9FAFB;
+        }
+        .dark input[type="range"]::-moz-range-thumb {
+            border-color: #1F2937;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<main class="flex flex-col flex-grow p-6 sm:p-8">
+<div class="flex items-center justify-between mb-8 pt-4">
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+<span class="material-symbols-outlined text-text-light dark:text-text-dark">arrow_back</span>
+</button>
+<div class="text-center">
+<h1 class="text-xl font-bold tracking-tight">Tes informations</h1>
+<p class="text-sm text-gray-500 dark:text-gray-400">Étape 2/3</p>
+</div>
+<div class="h-10 w-10"></div> 
+</div>
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-10">
+<div class="bg-primary h-1.5 rounded-full" style="width: 66%"></div>
+</div>
+<div class="flex flex-col gap-6 flex-grow">
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-2">
+<label class="font-semibold text-sm">Âge</label>
+<div class="flex items-center justify-between rounded-lg bg-surface-light dark:bg-surface-dark p-4 border border-border-light dark:border-border-dark">
+<span class="material-symbols-outlined text-secondary !text-2xl">cake</span>
+<span class="text-lg font-bold">28 ans</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-semibold text-sm">Sexe</label>
+<div class="grid grid-cols-2 gap-2">
+<button class="flex items-center justify-center gap-2 py-4 rounded-lg bg-primary text-white font-semibold border border-primary">
+<span class="material-symbols-outlined !text-2xl">male</span>
+</button>
+<button class="flex items-center justify-center gap-2 py-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-gray-400 dark:text-gray-500">
+<span class="material-symbols-outlined !text-2xl">female</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-baseline">
+<label class="font-semibold text-sm">Taille</label>
+<span class="text-2xl font-bold text-primary">175 <span class="text-base font-medium text-text-light dark:text-text-dark">cm</span></span>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-4 rounded-lg border border-border-light dark:border-border-dark">
+<input class="w-full" max="220" min="140" type="range" value="175"/>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-baseline">
+<label class="font-semibold text-sm">Poids</label>
+<span class="text-2xl font-bold text-primary">72 <span class="text-base font-medium text-text-light dark:text-text-dark">kg</span></span>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-4 rounded-lg border border-border-light dark:border-border-dark">
+<input class="w-full" max="150" min="40" type="range" value="72"/>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<label class="font-semibold text-sm">Niveau sportif</label>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center gap-2 py-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+<span class="text-2xl">🐢</span>
+<span class="text-sm font-semibold">Débutant</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 py-3 rounded-lg bg-primary/10 dark:bg-primary/20 border-2 border-primary text-primary">
+<span class="text-2xl">🏃</span>
+<span class="text-sm font-semibold">Intermédiaire</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 py-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+<span class="text-2xl">⚡️</span>
+<span class="text-sm font-semibold">Avancé</span>
+</button>
+</div>
+</div>
+</div>
+<div class="w-full flex flex-col items-center gap-6 pb-4 pt-8 mt-auto">
+<div class="flex px-4 py-3 justify-center w-full max-w-sm">
+<button class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 flex-1 bg-primary text-white text-lg font-bold leading-normal tracking-wide shadow-lg shadow-primary/30 hover:bg-opacity-90 transition-all duration-200">
+<span class="truncate">Continuer</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

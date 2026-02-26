@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Athli.AI - Évaluation Initiale</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+    @layer base {
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+        width: 100%;
+      }input[type="range"]::-webkit-slider-runnable-track {
+        background-color: #E5E7EB;border-radius: 9999px;
+        height: 0.5rem;}
+      .dark input[type="range"]::-webkit-slider-runnable-track {
+        background-color: #374151;}
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        margin-top: -6px;
+        height: 1.5rem;width: 1.5rem;background-color: #3B82F6;border-radius: 9999px;
+        border: 4px solid #F9FAFB;box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      }
+      .dark input[type="range"]::-webkit-slider-thumb {
+        border-color: #1E293B;}input[type="range"]::-moz-range-track {
+        background-color: #E5E7EB;border-radius: 9999px;
+        height: 0.5rem;}
+      .dark input[type="range"]::-moz-range-track {
+        background-color: #374151;}
+      input[type="range"]::-moz-range-thumb {
+        height: 1.5rem;width: 1.5rem;background-color: #3B82F6;border-radius: 9999px;
+        border: 4px solid #F9FAFB;box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      }
+      .dark input[type="range"]::-moz-range-thumb {
+        border-color: #1E293B;}
+    }
+  </style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3B82F6",
+            "secondary": "#7C3AED",
+            "accent": "#10B981",
+            "background-light": "#F9FAFB",
+            "background-dark": "#1E293B",
+            "text-light": "#1E293B",
+            "text-dark": "#F9FAFB",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "1rem", // 16px
+            "lg": "1.5rem", // 24px
+            "xl": "2rem", // 32px
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<main class="flex flex-col flex-grow p-6">
+<div class="pt-6 pb-8">
+<div class="flex items-center gap-4">
+<div class="flex-grow h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+<div class="h-2.5 bg-primary rounded-full" style="width: 66%;"></div>
+</div>
+<span class="text-sm font-semibold text-text-light dark:text-text-dark">2/3</span>
+</div>
+</div>
+<div class="flex-grow flex flex-col justify-start">
+<div class="w-full max-w-md mx-auto">
+<div class="text-center mb-10">
+<h1 class="text-text-light dark:text-text-dark tracking-tight text-3xl sm:text-4xl font-bold leading-tight">Tes capacités de base</h1>
+<p class="text-gray-500 dark:text-gray-400 mt-2">Indique tes performances maximales sur ces exercices simples.</p>
+</div>
+<div class="space-y-8">
+<div class="w-full">
+<label class="block text-lg font-semibold text-text-light dark:text-text-dark mb-4" for="pompes">Pompes max</label>
+<div class="flex items-center gap-4">
+<input class="flex-grow" id="pompes" max="100" min="0" type="range" value="25"/>
+<input class="w-20 text-center text-lg font-semibold bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark border-2 border-gray-200 dark:border-gray-700 rounded-lg py-2 focus:ring-primary focus:border-primary" type="number" value="25"/>
+</div>
+</div>
+<div class="w-full">
+<label class="block text-lg font-semibold text-text-light dark:text-text-dark mb-4" for="squats">Squats max</label>
+<div class="flex items-center gap-4">
+<input class="flex-grow" id="squats" max="200" min="0" type="range" value="50"/>
+<input class="w-20 text-center text-lg font-semibold bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark border-2 border-gray-200 dark:border-gray-700 rounded-lg py-2 focus:ring-primary focus:border-primary" type="number" value="50"/>
+</div>
+</div>
+<div class="w-full">
+<label class="block text-lg font-semibold text-text-light dark:text-text-dark mb-4" for="gainage">Gainage (secondes)</label>
+<div class="flex items-center gap-4">
+<input class="flex-grow" id="gainage" max="300" min="0" step="5" type="range" value="60"/>
+<input class="w-20 text-center text-lg font-semibold bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark border-2 border-gray-200 dark:border-gray-700 rounded-lg py-2 focus:ring-primary focus:border-primary" type="number" value="60"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full flex flex-col items-center gap-6 pt-8 pb-4">
+<div class="flex justify-center w-full max-w-sm">
+<button class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 flex-1 bg-primary text-white text-lg font-bold leading-normal tracking-wide shadow-lg shadow-primary/30 hover:bg-opacity-90 transition-all duration-200">
+<span class="truncate">Suivant</span>
+</button>
+</div>
+<div class="text-center">
+<a class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Passer cette étape</a>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

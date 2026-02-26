@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Athli.AI - Onboarding - Zones sensibles</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3B82F6",
+            "secondary": "#7C3AED",
+            "accent": "#10B981",
+            "background-light": "#F9FAFB",
+            "background-dark": "#1E293B",
+            "text-light": "#1E293B",
+            "text-dark": "#F9FAFB",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "1rem", // 16px
+            "lg": "1.5rem", // 24px
+            "xl": "2rem", // 32px
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="relative flex h-full min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<main class="flex flex-col flex-grow p-6 sm:p-8">
+<div class="flex items-center gap-4 pt-4 pb-8">
+<button class="p-2 -m-2">
+<span class="material-symbols-outlined text-3xl text-text-light/80 dark:text-text-dark/80">arrow_back_ios_new</span>
+</button>
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 50%"></div>
+</div>
+</div>
+<div class="flex flex-col items-center text-center gap-4 py-8">
+<h1 class="text-3xl sm:text-4xl font-bold tracking-tight">As-tu une zone que tu veux protéger ?</h1>
+<p class="text-base text-gray-500 dark:text-gray-400 max-w-sm">
+          Cela nous aidera à adapter tes séances pour éviter les blessures.
+        </p>
+</div>
+<div class="flex flex-col gap-4 flex-grow">
+<button class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg w-full border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-all duration-200">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 flex-shrink-0 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center">
+<img alt="Icône du genou" class="h-10 w-10 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcxjoh32CNky58LSXo29OenhfJbHbMQY5T94glOcjepCEh-8xBsrA9ZHPE42BGLv9StQ64Ur-mxJuOzF51r6kPZ4dta6mM4tHx7njC6XmEf_N8JoCLG-Lcp72aoiNDrD1Cu10hKzvo0wSrvM5QeVputIdXZMbJ2DCEVlL0S_Rc8DDdGfjt0rbasG5NAhAmfVnHs6TlDGfrA26hWAjExaUFHx8L9W9a9BNmODELAJDA1QXEIJj9_brZJHtQVnksJj6dSyzOETcCrNZl"/>
+</div>
+<span class="text-lg font-semibold">Genou</span>
+</div>
+<div class="w-7 h-7 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600 group-focus-within:border-primary group-focus-within:bg-primary">
+<span class="material-symbols-outlined text-sm text-white opacity-0 group-focus-within:opacity-100">check</span>
+</div>
+</button>
+<button class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg w-full border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-all duration-200">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 flex-shrink-0 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center">
+<img alt="Icône du dos" class="h-10 w-10 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNb6HjTm35KcQq5S3qz_xH5mp9Yy8zOcScfr_z5CSCk0QWdZsA6wEBQEk-443F2KUSRddw-Jr9H7Kfceko5LYVbPcgycpwvXd_jswRjlNCTRgGGIskTLcvFSfomHAvZZcfzTVEbX-Mb7Y1DzdGIEc_GvjUH5pkmpny8fPX8VJg5wMQadN1Yvu74dm-lLSsHYKpHozYGHfjrwAzXoFCqDPz7AqQL8fb33oRAIBeyy2sUHClbGCmWNIzsqh90iCxujgSXUbWEojzsORm"/>
+</div>
+<span class="text-lg font-semibold">Dos</span>
+</div>
+<div class="w-7 h-7 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600 group-focus-within:border-primary group-focus-within:bg-primary">
+<span class="material-symbols-outlined text-sm text-white opacity-0 group-focus-within:opacity-100">check</span>
+</div>
+</button>
+<button class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg w-full border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-all duration-200">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 flex-shrink-0 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center">
+<img alt="Icône de l'épaule" class="h-10 w-10 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKyREyHt4NnNZK7Vd47Vh09hMlDZsNIofn4MZ_lqAzeFtm8ClTEoQbwqEX4pmPBwVVhtJNNnTl3n16JFAGKUeeuMikJKNaDtpb34xqjJqHCqTLj8cCBvOS5unVebqdfkZzjNe1KD__Ik9iWwlA91qB32CafEunfJGZeQIKDaLjXuimBEm-8JnyF6gjD_L20ptTu5nbKlKgCqdd1Qhvv_eEDZd_nE6k5v3lZwSenw9rPTp4ppimxHCacLzwhQsePPG7CXBs6HXVgCvn"/>
+</div>
+<span class="text-lg font-semibold">Épaule</span>
+</div>
+<div class="w-7 h-7 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600 group-focus-within:border-primary group-focus-within:bg-primary">
+<span class="material-symbols-outlined text-sm text-white opacity-0 group-focus-within:opacity-100">check</span>
+</div>
+</button>
+<button class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg w-full border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-all duration-200">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 flex-shrink-0 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center">
+<img alt="Icône de la cheville" class="h-10 w-10 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXiXxrKBJfqs6Deg93f4wDGt-oDeUUXIsMJujvPQerImetZl1xoIXt_SLdssBymvL5G97HSow8JqupZKWpt6c8Vb6dNSAKzD8BYjf0gu_KpLhx1kpAnGLnx9mhjoSGYXXRyXl-s6FQl_iUYzx7FI4Cka539InPi-nn9_ERwF9uhqfUKJI2N4fNm2RO9d0aSwNvWa2Lo5TkiFIZvfU5sSz5EzwMd-KwHoeIU3e3u_i-vcc7sB8nPVLS6yoJv0a8I67CwINfy7ojruok"/>
+</div>
+<span class="text-lg font-semibold">Cheville</span>
+</div>
+<div class="w-7 h-7 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600 group-focus-within:border-primary group-focus-within:bg-primary">
+<span class="material-symbols-outlined text-sm text-white opacity-0 group-focus-within:opacity-100">check</span>
+</div>
+</button>
+<button class="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-lg w-full border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-all duration-200">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 flex-shrink-0 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl text-gray-500">sentiment_satisfied</span>
+</div>
+<span class="text-lg font-semibold">Aucune, je suis en pleine forme !</span>
+</div>
+<div class="w-7 h-7 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600 group-focus-within:border-primary group-focus-within:bg-primary">
+<span class="material-symbols-outlined text-sm text-white opacity-0 group-focus-within:opacity-100">check</span>
+</div>
+</button>
+</div>
+<div class="w-full pt-8 pb-4">
+<button class="flex w-full min-w-[84px] max-w-sm mx-auto cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-wide shadow-lg shadow-primary/30 hover:bg-opacity-90 transition-all duration-200">
+<span class="truncate">Suivant</span>
+</button>
+</div>
+</main>
+</div>
+
+</body></html>

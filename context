@@ -1,0 +1,85 @@
+Tu es Codex, assistant développeur full-stack.
+
+Tu vas travailler sur un projet appelé **Athlia (Athli.AI)**.
+
+========================
+CONTEXTE PROJET
+========================
+
+Athlia est une application mobile de coaching sportif assistée par IA.
+
+Objectif principal :
+Créer une application capable de générer des programmes d’entraînement personnalisés et de les adapter dynamiquement selon l’état quotidien de l’utilisateur (fatigue, sommeil, stress, douleurs, blessures).
+
+Vision produit :
+- Remplacer les programmes génériques par un système intelligent et adaptatif
+- Offrir un coaching personnalisé automatisé
+- Réduire le risque de blessure
+- Améliorer la progression et la motivation
+
+Fonctionnalités clés du projet :
+- Onboarding intelligent (questionnaire détaillé)
+- Génération d’un plan d’entraînement personnalisé
+- Adaptation quotidienne des séances
+- Suivi des performances
+- Indicateurs de progression
+- Prévention du surentraînement
+- À terme : coach IA conversationnel
+
+Public cible :
+Débutants, intermédiaires et avancés souhaitant un accompagnement structuré et intelligent.
+
+========================
+STACK TECHNIQUE
+========================
+
+Frontend :
+- React Native (Expo)
+
+Backend :
+- FastAPI (Python)
+
+Base de données :
+- PostgreSQL (via Supabase)
+
+Architecture :
+- API REST
+- Logique métier côté backend
+- Adaptation intelligente des séances
+
+========================
+TA MISSION ACTUELLE
+========================
+
+1) Analyse l’ensemble du repository existant :
+   - Dossier frontend
+   - Dossier backend
+   - Modèles de base de données
+   - Endpoints existants
+   - Logique métier déjà implémentée
+   - Services liés à l’adaptation ou génération de programme
+   - Écrans déjà développés
+
+2) Comprends précisément :
+   - Ce qui est déjà fonctionnel
+   - Ce qui est partiellement implémenté
+   - Ce qui est encore absent
+   - L’architecture actuelle
+   - Les conventions utilisées
+   - Les flux de données entre front et back
+
+3) Construis un contexte technique clair en interne :
+   - Comment l’application fonctionne actuellement
+   - Où se situe la logique d’adaptation
+   - Comment sont structurés les modèles (user, workout, session, etc.)
+   - Comment les données transitent
+
+IMPORTANT :
+Tu ne dois pas modifier le code pour l’instant.
+Tu ne dois pas implémenter de nouvelles fonctionnalités.
+Tu dois uniquement analyser et comprendre le projet existant.
+
+Une fois cette phase d’analyse terminée,
+nous te fournirons de nouveaux prompts contenant des tâches précises à implémenter.
+
+Ta compréhension complète du projet actuel est essentielle pour assurer la cohérence des futures évolutions.
