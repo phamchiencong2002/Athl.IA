@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: athlia-back
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./back/.env
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: athlia-front
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19006:19006"
+    volumes:
+      - ./front/athli-app:/app/athli-app
+      - /app/athli-app/node_modules
+    environment:
+      - NODE_ENV=development
+      - EXPO_PUBLIC_HOST=localhost
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    depends_on:
+      - backend
