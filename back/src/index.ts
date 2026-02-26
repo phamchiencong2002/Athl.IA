@@ -172,6 +172,14 @@ app.get("/health", (_req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
+app.get("/", (_req: Request, res: Response) => {
+  res.json({
+    name: "athlia-api",
+    ok: true,
+    endpoints: ["/health", "/auth/register", "/auth/login", "/auth/refresh", "/users"],
+  });
+});
+
 app.post("/auth/register", async (req: Request, res: Response) => {
   try {
     const { username, mail, password } = req.body as {

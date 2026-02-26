@@ -4,11 +4,13 @@
   "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
   "main": "index.js",
   "scripts": {
-  "dev": "nodemon src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js",
-  "prisma:generate": "prisma generate",
-  "prisma:migrate": "prisma migrate deploy"
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:push": "prisma db push"
   },
   "repository": {
     "type": "git",
@@ -23,7 +25,7 @@
   },
   "homepage": "https://gitlab.com/Oubay-mdn/athlia-back#readme",
   "dependencies": {
-    "@prisma/client": "^7.0.0",
+    "@prisma/client": "7.4.1",
     "@supabase/supabase-js": "^2.83.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0"
@@ -32,7 +34,7 @@
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
     "nodemon": "^3.1.11",
-    "prisma": "^7.0.0",
+    "prisma": "7.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
