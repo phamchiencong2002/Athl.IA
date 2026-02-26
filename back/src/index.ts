@@ -1,9 +1,21 @@
 import "dotenv/config";
 import crypto from "node:crypto";
 import { promisify } from "node:util";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@prisma/client";
 import express, { type NextFunction, type Request, type Response } from "express";
+import { Pool } from "pg";
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 const app = express();
+
 app.use(express.json());
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -20,17 +32,6 @@ const scryptAsync = promisify(crypto.scrypt);
 const TOKEN_SECRET = process.env.TOKEN_SECRET || "athlia-dev-secret";
 const ACCESS_TTL_SECONDS = 60 * 60;
 const REFRESH_TTL_SECONDS = 60 * 60 * 24 * 30;
-
-type AccountRecord = {
-  id: string;
-  username: string;
-  mail: string;
-  passwordHash: string;
-  avatar: string | null;
-  statut_account: string | null;
-  last_connection: string | null;
-  created_at: string;
-};
 
 type UserProfileRecord = {
   id: string;
@@ -62,10 +63,6 @@ type AuthenticatedRequest = Request & {
     accountId: string;
   };
 };
-
-const accountsById = new Map<string, AccountRecord>();
-const accountIdByMail = new Map<string, string>();
-const profilesByAccountId = new Map<string, UserProfileRecord>();
 
 const toBase64Url = (value: string): string =>
   Buffer.from(value, "utf8")
@@ -142,13 +139,56 @@ const verifyPassword = async (password: string, storedHash: string): Promise<boo
   return crypto.timingSafeEqual(actual, expected);
 };
 
-const serializeAccount = (account: AccountRecord) => ({
+const serializeAccount = (account: {
+  id: string;
+  username: string;
+  mail: string;
+  avatar: string | null;
+  statut_account: string | null;
+  last_connection: Date | null;
+}) => ({
   id: account.id,
   username: account.username,
   mail: account.mail,
   avatar: account.avatar,
   statut_account: account.statut_account,
-  last_connection: account.last_connection,
+  last_connection: account.last_connection ? account.last_connection.toISOString() : null,
+});
+
+const serializeProfile = (profile: {
+  id: string;
+  id_account: string;
+  gender: string | null;
+  birthdate: Date | null;
+  height_cm: number | null;
+  weight_kg: { toString(): string } | null;
+  training_experience: string | null;
+  sport: string | null;
+  main_goal: string | null;
+  week_availability: number | null;
+  equipment: string | null;
+  health: string | null;
+  sleep: string | null;
+  stress: string | null;
+  load: string | null;
+  recovery: string | null;
+}): UserProfileRecord => ({
+  id: profile.id,
+  id_account: profile.id_account,
+  gender: profile.gender,
+  birthdate: profile.birthdate ? profile.birthdate.toISOString() : null,
+  height_cm: profile.height_cm,
+  weight_kg: profile.weight_kg ? Number(profile.weight_kg.toString()) : null,
+  training_experience: profile.training_experience,
+  sport: profile.sport,
+  main_goal: profile.main_goal,
+  week_availability: profile.week_availability,
+  equipment: profile.equipment,
+  health: profile.health,
+  sleep: profile.sleep,
+  stress: profile.stress,
+  load: profile.load,
+  recovery: profile.recovery,
 });
 
 const requireAccessToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
@@ -194,32 +234,45 @@ app.post("/auth/register", async (req: Request, res: Response) => {
     }
 
     const normalizedMail = mail.trim().toLowerCase();
-    if (accountIdByMail.has(normalizedMail)) {
-      res.status(409).json({ error: "Account already exists" });
+    const existingAccount = await prisma.account.findFirst({ where: { mail: normalizedMail } });
+
+    if (existingAccount) {
+      if (!(await verifyPassword(password, existingAccount.password))) {
+        res.status(409).json({ error: "Account already exists" });
+        return;
+      }
+
+      const updatedAccount = await prisma.account.update({
+        where: { id: existingAccount.id },
+        data: { last_connection: new Date() },
+      });
+
+      res.json({
+        ...createTokenPair(updatedAccount.id),
+        account: serializeAccount(updatedAccount),
+      });
       return;
     }
 
-    const now = new Date().toISOString();
-    const id = crypto.randomUUID();
-    const account: AccountRecord = {
-      id,
-      username: username.trim(),
-      mail: normalizedMail,
-      passwordHash: await hashPassword(password),
-      avatar: null,
-      statut_account: "active",
-      last_connection: now,
-      created_at: now,
-    };
-
-    accountsById.set(id, account);
-    accountIdByMail.set(normalizedMail, id);
+    const now = new Date();
+    const account = await prisma.account.create({
+      data: {
+        username: username.trim(),
+        mail: normalizedMail,
+        password: await hashPassword(password),
+        avatar: null,
+        statut_account: "active",
+        last_connection: now,
+        created_at: now,
+      },
+    });
 
     res.status(201).json({
-      ...createTokenPair(id),
+      ...createTokenPair(account.id),
       account: serializeAccount(account),
     });
-  } catch {
+  } catch (error) {
+    console.error("Register error", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -233,25 +286,28 @@ app.post("/auth/login", async (req: Request, res: Response) => {
     }
 
     const normalizedMail = mail.trim().toLowerCase();
-    const accountId = accountIdByMail.get(normalizedMail);
-    const account = accountId ? accountsById.get(accountId) : undefined;
-    if (!account || !(await verifyPassword(password, account.passwordHash))) {
+    const account = await prisma.account.findFirst({ where: { mail: normalizedMail } });
+    if (!account || !(await verifyPassword(password, account.password))) {
       res.status(401).json({ error: "Invalid credentials" });
       return;
     }
 
-    account.last_connection = new Date().toISOString();
+    const updatedAccount = await prisma.account.update({
+      where: { id: account.id },
+      data: { last_connection: new Date() },
+    });
 
     res.json({
-      ...createTokenPair(account.id),
-      account: serializeAccount(account),
+      ...createTokenPair(updatedAccount.id),
+      account: serializeAccount(updatedAccount),
     });
-  } catch {
+  } catch (error) {
+    console.error("Login error", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-app.post("/auth/refresh", (req: Request, res: Response) => {
+app.post("/auth/refresh", async (req: Request, res: Response) => {
   const { refreshToken } = req.body as { refreshToken?: string };
   if (!refreshToken) {
     res.status(400).json({ error: "refreshToken is required" });
@@ -259,7 +315,17 @@ app.post("/auth/refresh", (req: Request, res: Response) => {
   }
 
   const payload = parseToken(refreshToken);
-  if (!payload || payload.type !== "refresh" || !accountsById.has(payload.sub)) {
+  if (!payload || payload.type !== "refresh") {
+    res.status(401).json({ error: "Invalid refresh token" });
+    return;
+  }
+
+  const account = await prisma.account.findUnique({
+    where: { id: payload.sub },
+    select: { id: true },
+  });
+
+  if (!account) {
     res.status(401).json({ error: "Invalid refresh token" });
     return;
   }
@@ -267,89 +333,123 @@ app.post("/auth/refresh", (req: Request, res: Response) => {
   res.json(createTokenPair(payload.sub));
 });
 
-app.post("/users", requireAccessToken, (req: AuthenticatedRequest, res: Response) => {
-  const accountId = req.auth?.accountId;
-  if (!accountId) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
+app.post("/users", requireAccessToken, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const accountId = req.auth?.accountId;
+    if (!accountId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const account = await prisma.account.findUnique({
+      where: { id: accountId },
+      select: { id: true },
+    });
+
+    if (!account) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const {
+      id_account,
+      gender,
+      birthdate,
+      height_cm,
+      weight_kg,
+      training_experience,
+      sport,
+      main_goal,
+      week_availability,
+      equipment,
+      health,
+      sleep,
+      stress,
+      load,
+      recovery,
+    } = req.body as {
+      id_account?: string;
+      gender?: string | null;
+      birthdate?: string;
+      height_cm?: number | null;
+      weight_kg?: number | null;
+      training_experience?: string | null;
+      sport?: string | null;
+      main_goal?: string | null;
+      week_availability?: number | null;
+      equipment?: string | null;
+      health?: string | null;
+      sleep?: string | null;
+      stress?: string | null;
+      load?: string | null;
+      recovery?: string | null;
+    };
+
+    if (!id_account) {
+      res.status(400).json({ error: "id_account is required" });
+      return;
+    }
+    if (id_account !== accountId) {
+      res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+
+    const parsedBirthdate = birthdate ? new Date(birthdate) : null;
+    if (birthdate && Number.isNaN(parsedBirthdate?.getTime())) {
+      res.status(400).json({ error: "birthdate is invalid" });
+      return;
+    }
+
+    const existingProfile = await prisma.users.findFirst({
+      where: { id_account },
+      select: { id: true },
+    });
+
+    const profile = existingProfile
+      ? await prisma.users.update({
+          where: { id: existingProfile.id },
+          data: {
+            gender: gender ?? null,
+            birthdate: parsedBirthdate,
+            height_cm: height_cm ?? null,
+            weight_kg: weight_kg ?? null,
+            training_experience: training_experience ?? null,
+            sport: sport ?? null,
+            main_goal: main_goal ?? null,
+            week_availability: week_availability ?? null,
+            equipment: equipment ?? null,
+            health: health ?? null,
+            sleep: sleep ?? null,
+            stress: stress ?? null,
+            load: load ?? null,
+            recovery: recovery ?? null,
+          },
+        })
+      : await prisma.users.create({
+          data: {
+            id_account,
+            gender: gender ?? null,
+            birthdate: parsedBirthdate,
+            height_cm: height_cm ?? null,
+            weight_kg: weight_kg ?? null,
+            training_experience: training_experience ?? null,
+            sport: sport ?? null,
+            main_goal: main_goal ?? null,
+            week_availability: week_availability ?? null,
+            equipment: equipment ?? null,
+            health: health ?? null,
+            sleep: sleep ?? null,
+            stress: stress ?? null,
+            load: load ?? null,
+            recovery: recovery ?? null,
+          },
+        });
+
+    res.status(existingProfile ? 200 : 201).json(serializeProfile(profile));
+  } catch (error) {
+    console.error("Users profile error", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-
-  if (!accountsById.has(accountId)) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
-  const {
-    id_account,
-    gender,
-    birthdate,
-    height_cm,
-    weight_kg,
-    training_experience,
-    sport,
-    main_goal,
-    week_availability,
-    equipment,
-    health,
-    sleep,
-    stress,
-    load,
-    recovery,
-  } = req.body as {
-    id_account?: string;
-    gender?: string | null;
-    birthdate?: string;
-    height_cm?: number | null;
-    weight_kg?: number | null;
-    training_experience?: string | null;
-    sport?: string | null;
-    main_goal?: string | null;
-    week_availability?: number | null;
-    equipment?: string | null;
-    health?: string | null;
-    sleep?: string | null;
-    stress?: string | null;
-    load?: string | null;
-    recovery?: string | null;
-  };
-
-  if (!id_account) {
-    res.status(400).json({ error: "id_account is required" });
-    return;
-  }
-  if (id_account !== accountId) {
-    res.status(403).json({ error: "Forbidden" });
-    return;
-  }
-
-  const parsedBirthdate = birthdate ? new Date(birthdate) : null;
-  if (birthdate && Number.isNaN(parsedBirthdate?.getTime())) {
-    res.status(400).json({ error: "birthdate is invalid" });
-    return;
-  }
-
-  const existing = profilesByAccountId.get(id_account);
-  const profile: UserProfileRecord = {
-    id: existing?.id || crypto.randomUUID(),
-    id_account,
-    gender: gender ?? null,
-    birthdate: parsedBirthdate ? parsedBirthdate.toISOString() : null,
-    height_cm: height_cm ?? null,
-    weight_kg: weight_kg ?? null,
-    training_experience: training_experience ?? null,
-    sport: sport ?? null,
-    main_goal: main_goal ?? null,
-    week_availability: week_availability ?? null,
-    equipment: equipment ?? null,
-    health: health ?? null,
-    sleep: sleep ?? null,
-    stress: stress ?? null,
-    load: load ?? null,
-    recovery: recovery ?? null,
-  };
-
-  profilesByAccountId.set(id_account, profile);
-  res.status(existing ? 200 : 201).json(profile);
 });
 
 const port = Number(process.env.PORT || 3000);

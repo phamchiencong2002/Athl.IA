@@ -1,7 +1,7 @@
 // app/index.tsx
 import { router } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import ScreenContainer from '../components/ui/ScreenContainer';
 import colors from '../constants/colors';
@@ -41,9 +41,12 @@ export default function WelcomeScreen() {
           />
 
           {/* Login */}
-          <Text style={styles.loginText}>
-            Déjà un compte ? <Text style={styles.loginLink}>Se connecter</Text>
-          </Text>
+          <View style={styles.loginRow}>
+            <Text style={styles.loginText}>Déjà un compte ? </Text>
+            <TouchableOpacity onPress={() => router.push('/login')}>
+              <Text style={styles.loginLink}>Se connecter</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </ScreenContainer>
@@ -124,10 +127,14 @@ const styles = StyleSheet.create({
   startButton: {
     marginBottom: spacing.sm,
   },
-  loginText: {
-    textAlign: 'center',
-    color: colors.textMuted,
+  loginRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: spacing.sm,
+  },
+  loginText: {
+    color: colors.textMuted,
   },
   loginLink: {
     fontWeight: '600',
