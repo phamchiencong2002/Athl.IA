@@ -24,7 +24,6 @@ services:
       - "19006:19006"
     volumes:
       - ./front/athli-app:/app/athli-app
-      - /app/athli-app/node_modules
     environment:
       - NODE_ENV=development
       - EXPO_PUBLIC_HOST=localhost

@@ -6,8 +6,11 @@ import PrimaryButton from '../components/ui/PrimaryButton';
 import ScreenContainer from '../components/ui/ScreenContainer';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
+import { useAuth } from '../context/AuthContext';
 
 export default function WelcomeScreen() {
+  const { token } = useAuth();
+
   return (
     <ScreenContainer>
       <View style={styles.wrapper}>
@@ -35,8 +38,8 @@ export default function WelcomeScreen() {
           </View>
 
           <PrimaryButton
-            title="Commencer l'aventure"
-            onPress={() => router.push('/onboarding/profile')}
+            title={token ? 'Aller au dashboard' : "Commencer l'aventure"}
+            onPress={() => router.push(token ? '/dashboard' : '/onboarding/profile')}
             style={styles.startButton}
           />
 

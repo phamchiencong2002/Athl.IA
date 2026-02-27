@@ -7,8 +7,10 @@ import colors from '../constants/colors';
 import spacing from '../constants/spacing';
 import { ApiError } from '../lib/api';
 import { login } from '../lib/auth';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginScreen() {
+  const { signIn } = useAuth();
   const [mail, setMail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,10 +26,11 @@ export default function LoginScreen() {
     setError(null);
     try {
       const auth = await login({ mail, password });
+      await signIn(auth.token, auth.refreshToken, auth.account.id);
       Alert.alert(
         'Connexion réussie',
         `Bienvenue ${auth.account.username}.`,
-        [{ text: 'OK', onPress: () => router.back() }],
+        [{ text: 'OK', onPress: () => router.replace('/dashboard') }],
       );
     } catch (err) {
       if (err instanceof ApiError) {

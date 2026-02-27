@@ -45,7 +45,11 @@ export async function apiFetch<TResponse>(
   const data = text ? (JSON.parse(text) as unknown) : null;
 
   if (!response.ok) {
-    throw new ApiError(response.status, (data as { error?: string })?.error || "API error", data);
+    const apiMessage =
+      (data as { error?: string; detail?: string })?.error ||
+      (data as { error?: string; detail?: string })?.detail ||
+      "API error";
+    throw new ApiError(response.status, apiMessage, data);
   }
 
   return data as TResponse;
