@@ -5,9 +5,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
 import BottomNav from '../../components/ui/BottomNav';
+import { useAuth } from '../../context/AuthContext';
 
 export default function SettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const { signOut } = useAuth();
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -112,6 +114,18 @@ export default function SettingsScreen() {
 
         {/* Danger Zone */}
         <View style={styles.dangerZone}>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            activeOpacity={0.7}
+            onPress={async () => {
+              await signOut();
+              router.replace('/login');
+            }}
+          >
+            <MaterialIcons name="logout" size={20} color="#475569" />
+            <Text style={[styles.deleteButtonText, { color: '#475569' }]}>Se déconnecter</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.deleteButton} activeOpacity={0.7}>
             <MaterialIcons name="delete" size={20} color="#EF4444" />
             <Text style={styles.deleteButtonText}>Supprimer mon compte</Text>
