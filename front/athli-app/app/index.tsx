@@ -1,36 +1,45 @@
 // app/index.tsx
 import { router } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions } from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import ScreenContainer from '../components/ui/ScreenContainer';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
 import { useAuth } from '../context/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const { width } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
   const { token } = useAuth();
 
   return (
-    <ScreenContainer>
-      <View style={styles.wrapper}>
-        <View style={styles.card}>
-          {/* Logo + tên app */}
-          <View style={styles.logoRow}>
-            <View style={styles.checkCircle}>
-              <Text style={styles.checkText}>✓</Text>
-            </View>
-            <Text style={styles.appName}>
-              Athli.<Text style={styles.appNameAccent}>AI</Text>
-            </Text>
-          </View>
-
-          <View style={styles.heroPlaceholder} />
-
-          <Text style={styles.title}>
-            Ton coach intelligent,{'\n'}adapté à ta forme du jour.
+    <SafeAreaView style={styles.wrapper}>
+      <View style={styles.container}>
+        {/* Logo Section */}
+        <View style={styles.logoRow}>
+          <Text style={styles.appName}>
+            Athli<Text style={styles.appNameAccent}>.AI</Text>
           </Text>
+        </View>
 
+        {/* Main Content: Visual + Text */}
+        <View style={styles.mainContent}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDAvnTN7dl7wBblKsoLi8llHdTHCh27sArNfwQnQn-mcZOhe5d5TuwoUTs-GCIaPuUYeOec0c7QABkVfINuCO2PRNyvUREDWR4MXWyD_36fQ5vA-sbCD84WpU46bo3HSJQoBrPCmwCjzyQKWFHWduni0cqZkfdBtZvp1ckml2UAfa19HCIxkQNSJwzeeJynADcf8JilcxxZ6iQqYp5dZ2ttfJhWbxri8cGo3DJNWqz8Rs_Aok0xjzoV0t3G9o2ZWaHHL9hjsdPyBqsX' }}
+              style={styles.heroImage}
+              resizeMode="cover"
+            />
+          </View>
+          <Text style={styles.title}>
+            Ton coach intelligent, adapté à ta forme du jour.
+          </Text>
+        </View>
+
+        {/* Bottom Section: CTA + Login */}
+        <View style={styles.bottomSection}>
           <View style={styles.dotsRow}>
             <View style={[styles.dot, styles.dotActive]} />
             <View style={styles.dot} />
@@ -41,9 +50,9 @@ export default function WelcomeScreen() {
             title={token ? 'Aller au dashboard' : "Commencer l'aventure"}
             onPress={() => router.push(token ? '/dashboard' : '/onboarding/profile')}
             style={styles.startButton}
+            textStyle={styles.startButtonText}
           />
 
-          {/* Login */}
           <View style={styles.loginRow}>
             <Text style={styles.loginText}>Déjà un compte ? </Text>
             <TouchableOpacity onPress={() => router.push('/login')}>
@@ -52,95 +61,114 @@ export default function WelcomeScreen() {
           </View>
         </View>
       </View>
-    </ScreenContainer>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',        
+    backgroundColor: colors.backgroundLight,
   },
-  card: {
-    backgroundColor: colors.cardBg,
-    borderRadius: 24,
-    borderWidth: 2,
-    borderColor: colors.border,
-    padding: spacing.lg,
-    width: '100%',               
-    maxWidth: 420,               
+  container: {
+    flex: 1,
+    padding: spacing.xl,
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   logoRow: {
-    flexDirection: 'row',
+    marginTop: spacing.md,
     alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  checkCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.sm,
-  },
-  checkText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '700',
   },
   appName: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: 28,
+    fontWeight: '800',
+    color: colors.contentLight,
+    letterSpacing: -0.5,
   },
   appNameAccent: {
-    color: colors.primary,
+    color: colors.primaryBlue,
   },
-  heroPlaceholder: {
-    height: 220,
+  mainContent: {
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 400,
+  },
+  imageContainer: {
+    width: width * 0.75,
+    maxWidth: 320,
+    aspectRatio: 1,
     borderRadius: 24,
-    backgroundColor: '#020617',
-    marginBottom: spacing.lg,
+    overflow: 'hidden',
+    marginBottom: spacing.xl,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 5,
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: 32,
+    fontWeight: '800',
+    color: colors.contentLight,
     textAlign: 'center',
-    marginBottom: spacing.lg,
+    lineHeight: 38,
+    letterSpacing: -0.5,
+  },
+  bottomSection: {
+    width: '100%',
+    alignItems: 'center',
+    paddingBottom: spacing.lg,
   },
   dotsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.dotInactive,
-    marginHorizontal: 4,
+    backgroundColor: '#D1D5DB',
+    marginHorizontal: 5,
   },
   dotActive: {
-    backgroundColor: colors.dotActive,
-    width: 16,
+    backgroundColor: colors.primaryBlue,
+    width: 24,
   },
   startButton: {
-    marginBottom: spacing.sm,
+    width: '100%',
+    maxWidth: 380,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: colors.primaryBlue,
+    shadowColor: colors.primaryBlue,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+    marginBottom: spacing.lg,
+  },
+  startButtonText: {
+    fontSize: 18,
+    letterSpacing: 0.5,
   },
   loginRow: {
-    alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: spacing.sm,
+    alignItems: 'center',
   },
   loginText: {
-    color: colors.textMuted,
+    fontSize: 15,
+    fontWeight: '500',
+    color: colors.mutedLight,
   },
   loginLink: {
-    fontWeight: '600',
-    color: colors.text,
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.primaryBlue,
   },
 });
