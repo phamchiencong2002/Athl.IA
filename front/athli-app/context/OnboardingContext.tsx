@@ -20,6 +20,14 @@ export interface OnboardingData {
   // Step 4 – Equipment
   locations: string[];
   equipment: string[];
+  // New Fields from mockups 3-7
+  protectedZones: string[];
+  movementLimitations: string[];
+  baseline: {
+    pushups: number;
+    squats: number;
+    plank: number;
+  };
 }
 
 const DEFAULT_DATA: OnboardingData = {
@@ -37,6 +45,9 @@ const DEFAULT_DATA: OnboardingData = {
   injuries: [],
   locations: [],
   equipment: [],
+  protectedZones: [],
+  movementLimitations: [],
+  baseline: { pushups: 25, squats: 50, plank: 60 },
 };
 
 interface ContextValue {

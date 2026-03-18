@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1160df",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #1160df 0%, #8b5cf6 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative mx-auto flex min-h-screen max-w-md flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+<!-- Header -->
+<header class="flex items-center p-4 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-10">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-primary/10 text-slate-900 dark:text-slate-100 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="flex-1 text-center mr-10 text-lg font-bold leading-tight tracking-tight">Modifier le Profil</h1>
+</header>
+<!-- Profile Picture Section -->
+<div class="flex flex-col items-center gap-4 py-6">
+<div class="relative group">
+<div class="size-32 rounded-full border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden bg-slate-200 dark:bg-slate-700">
+<img alt="Avatar Alex" class="w-full h-full object-cover" data-alt="Photo de profil d'un athlète masculin" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAUE6-d_h6UP3FcdoHAIduQlwCQzNwhpcEdBbqAvH7eY7Whzf6b-RVNEEu7uIKtTr3v6FGtDBujQ_oehAPMEQHk3VIRG7zg0_o4OXwoC_Q5vHgF-zjilHQW1WBUqRU9IRvv2XoH5K4lVPlCTzk5gIRdsemkm2axkvwDdhRaXvP0gmV-MlxELN4d5F5TOZRFURGFxRnTF-wlqOGkf3rjhBwKNGttliCI7IJ3k85FXIyJ73ylZxGQtAlHUPVLFooJIUcqldQj1aN-Y2g"/>
+</div>
+<button class="absolute bottom-0 right-0 bg-primary p-2 rounded-full text-white shadow-lg border-2 border-white dark:border-slate-800">
+<span class="material-symbols-outlined text-sm">photo_camera</span>
+</button>
+</div>
+<div class="text-center">
+<h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Alex</h2>
+<button class="text-primary font-medium text-sm hover:underline">Modifier la photo</button>
+</div>
+</div>
+<!-- Form Fields -->
+<div class="px-6 flex flex-col gap-6 pb-32">
+<!-- Basic Info -->
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-600 dark:text-slate-400 ml-1">Prénom</label>
+<input class="w-full h-14 px-4 rounded-xl border border-primary/20 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" type="text" value="Alex"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-600 dark:text-slate-400 ml-1">Email</label>
+<input class="w-full h-14 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" type="email" value="alex.fit@example.com"/>
+</div>
+</div>
+<!-- Goal Selection -->
+<div class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-slate-600 dark:text-slate-400 ml-1">Objectif</label>
+<div class="grid grid-cols-2 gap-3">
+<div class="p-4 rounded-xl border-2 border-primary bg-primary/5 flex flex-col items-center gap-2 cursor-pointer transition-all">
+<span class="material-symbols-outlined text-primary text-3xl">fitness_center</span>
+<span class="text-sm font-bold text-primary">Hypertrophie</span>
+</div>
+<div class="p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col items-center gap-2 cursor-pointer transition-all opacity-60">
+<span class="material-symbols-outlined text-slate-500 text-3xl">bolt</span>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-400">Perte de poids</span>
+</div>
+</div>
+</div>
+<!-- Level Selection -->
+<div class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-slate-600 dark:text-slate-400 ml-1">Niveau</label>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 opacity-60">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">exercise</span>
+<span class="font-medium">Intermédiaire</span>
+</div>
+<div class="size-5 rounded-full border-2 border-slate-300"></div>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl border-2 border-primary bg-primary/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">military_tech</span>
+<span class="font-bold text-slate-900 dark:text-slate-100">Avancé</span>
+</div>
+<div class="size-5 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[12px] font-bold">check</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button -->
+<div class="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent max-w-md mx-auto">
+<button class="w-full h-14 bg-gradient-primary rounded-xl text-white font-bold text-lg shadow-lg shadow-primary/30 hover:shadow-xl transition-all active:scale-[0.98]">
+                Sauvegarder les modifications
+            </button>
+</div>
+</div>
+</body></html>

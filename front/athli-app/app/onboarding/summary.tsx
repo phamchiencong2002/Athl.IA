@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View, TextInput, SafeAreaView } from 'react-native';
 import PrimaryButton from '../../components/ui/PrimaryButton';
 import ScreenContainer from '../../components/ui/ScreenContainer';
 import colors from '../../constants/colors';
@@ -13,7 +13,7 @@ import { generateProgram } from '../../lib/workouts';
 import { createUserProfile } from '../../lib/users';
 
 export default function SummaryScreen() {
-  const { data, reset } = useOnboarding();
+  const { data, update, reset } = useOnboarding();
   const { signIn } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -26,6 +26,11 @@ export default function SummaryScreen() {
   }, [data.age]);
 
   const submit = async () => {
+    if (!data.username || !data.email || !data.password) {
+      Alert.alert('Erreur', 'Veuillez remplir vos identifiants pour créer votre compte.');
+      return;
+    }
+
     setLoading(true);
     try {
       const auth = await register({ username: data.username, mail: data.email, password: data.password });
@@ -38,10 +43,10 @@ export default function SummaryScreen() {
         height_cm: data.height,
         weight_kg: data.weight,
         training_experience: data.level,
-        sport: data.sport,
+        sport: data.sport || '',
         main_goal: data.goal,
         week_availability: data.weekAvailability,
-        equipment: data.equipment.join(','),
+        equipment: (data.equipment || []).join(','),
       });
 
       await generateProgram(auth.token, {
@@ -51,7 +56,7 @@ export default function SummaryScreen() {
       });
 
       reset();
-      Alert.alert('Onboarding termine', 'Ton plan a ete genere.', [{ text: 'OK', onPress: () => router.replace('/dashboard') }]);
+      router.replace('/dashboard');
     } catch (error) {
       const message = error instanceof ApiError ? error.message : 'Impossible de finaliser onboarding';
       Alert.alert('Erreur', message);
@@ -61,28 +66,137 @@ export default function SummaryScreen() {
   };
 
   return (
-    <ScreenContainer>
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.card}>
-          <Text style={styles.title}>Recapitulatif</Text>
-          <Text style={styles.row}>Profil: {data.username} ({data.email})</Text>
-          <Text style={styles.row}>Objectif: {data.goal || 'non defini'}</Text>
-          <Text style={styles.row}>Sport: {data.sport || 'non defini'}</Text>
-          <Text style={styles.row}>Disponibilite: {data.weekAvailability || 0} j/semaine</Text>
-          <Text style={styles.row}>Douleurs: {data.injuries.join(', ') || 'aucune'}</Text>
-          <Text style={styles.row}>Materiel: {data.equipment.join(', ') || 'aucun'}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Dernière étape ! 🚀</Text>
+          <Text style={styles.subtitle}>Créez votre compte pour générer votre programme personnalisé instantanément.</Text>
+        </View>
 
-          <PrimaryButton title="Generer mon programme" onPress={submit} loading={loading} disabled={loading} style={styles.button} />
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Identifiants</Text>
+          <TextInput
+            placeholder="Pseudo"
+            value={data.username}
+            onChangeText={(username) => update({ username })}
+            style={styles.input}
+            placeholderTextColor={colors.mutedLight}
+          />
+          <TextInput
+            placeholder="Email"
+            value={data.email}
+            onChangeText={(email) => update({ email })}
+            style={styles.input}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            placeholderTextColor={colors.mutedLight}
+          />
+          <TextInput
+            placeholder="Mot de passe"
+            value={data.password}
+            onChangeText={(password) => update({ password })}
+            style={styles.input}
+            secureTextEntry
+            placeholderTextColor={colors.mutedLight}
+          />
+        </View>
+
+        <View style={styles.summaryBox}>
+          <Text style={styles.summaryTitle}>Votre Profil</Text>
+          <Text style={styles.summaryText}>Objectif : {data.goal || 'Général'}</Text>
+          <Text style={styles.summaryText}>Fréquence : {data.weekAvailability || 0}x par semaine</Text>
+          <Text style={styles.summaryText}>Niveau : {data.level}</Text>
         </View>
       </ScrollView>
-    </ScreenContainer>
+
+      <View style={styles.footer}>
+        <PrimaryButton
+          title="Générer mon programme"
+          onPress={submit}
+          loading={loading}
+          disabled={loading}
+          style={styles.button}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { flexGrow: 1, justifyContent: 'center' },
-  card: { backgroundColor: colors.cardBg, borderRadius: 24, padding: spacing.lg, gap: spacing.sm },
-  title: { color: colors.text, fontSize: 24, fontWeight: '700', marginBottom: spacing.sm },
-  row: { color: colors.textMuted, fontSize: 15 },
-  button: { marginTop: spacing.md },
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.backgroundLight,
+  },
+  content: {
+    flexGrow: 1,
+    padding: spacing.xl,
+    paddingTop: spacing.xxl,
+  },
+  titleContainer: {
+    marginBottom: 48,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: colors.contentLight,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: colors.mutedLight,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  formGroup: {
+    gap: spacing.md,
+    marginBottom: 32,
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.contentLight,
+    marginBottom: spacing.xs,
+  },
+  input: {
+    backgroundColor: colors.surfaceLight,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    padding: spacing.md,
+    fontSize: 16,
+    color: colors.contentLight,
+  },
+  summaryBox: {
+    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.3)',
+    borderRadius: 16,
+    padding: spacing.md,
+  },
+  summaryTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.primaryBlue,
+    marginBottom: spacing.xs,
+  },
+  summaryText: {
+    fontSize: 14,
+    color: colors.contentLight,
+    marginBottom: 4,
+  },
+  footer: {
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
+  },
+  button: {
+    backgroundColor: colors.primaryBlue,
+    shadowColor: colors.primaryBlue,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
 });

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3B82F6",
+                        "secondary": "#7C3AED",
+                        "positive": "#10B981",
+                        "anthracite": "#1E293B",
+                        "background-light": "#F9FAFB",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "card": "1.75rem", // 28px
+                        "button": "1.5rem", // 24px
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>Athli.AI - Planning Hebdomadaire</title>
+<style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB;
+            color: #1E293B;
+            min-height: 100dvh;
+        }
+        .text-anthracite { color: #1E293B; }
+        .bg-positive-soft { background-color: rgba(16, 185, 129, 0.1); }
+        .text-positive { color: #10B981; }
+        .rounded-3xl { border-radius: 1.75rem; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .fill-1 { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="font-display">
+<div class="max-w-md mx-auto min-h-screen flex flex-col pb-28 bg-background-light relative overflow-x-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between px-7 pt-10 pb-6">
+<div class="flex items-center gap-4">
+<div class="bg-primary/10 size-11 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl">calendar_month</span>
+</div>
+<div>
+<h1 class="text-xl font-extrabold tracking-tight text-anthracite">Athli.AI</h1>
+<p class="text-[13px] text-slate-500 font-medium">Planning</p>
+</div>
+</div>
+<button class="size-11 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-600 shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+</header>
+<!-- Page Title & Date -->
+<div class="px-7 pt-2 pb-2">
+<h2 class="text-[22px] font-black text-anthracite tracking-tight">Planning Hebdomadaire</h2>
+<p class="text-slate-400 text-sm font-semibold mt-0.5">Semaine du 12 au 18 Juin</p>
+</div>
+<!-- Horizontal Calendar -->
+<div class="flex gap-3 px-7 py-6 overflow-x-auto no-scrollbar">
+<!-- Active Day -->
+<div class="flex flex-col items-center justify-center min-w-[64px] h-24 rounded-3xl bg-gradient-to-br from-primary to-secondary text-white shadow-lg shadow-primary/25 border border-white/10">
+<span class="text-[11px] font-bold uppercase tracking-wider opacity-80 mb-1">Lun</span>
+<span class="text-xl font-black">12</span>
+</div>
+<!-- Inactive Days -->
+<div class="flex flex-col items-center justify-center min-w-[64px] h-24 rounded-3xl bg-white border border-slate-100 shadow-sm">
+<span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Mar</span>
+<span class="text-xl font-black text-anthracite">13</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[64px] h-24 rounded-3xl bg-white border border-slate-100 shadow-sm">
+<span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Mer</span>
+<span class="text-xl font-black text-anthracite">14</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[64px] h-24 rounded-3xl bg-white border border-slate-100 shadow-sm">
+<span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Jeu</span>
+<span class="text-xl font-black text-anthracite">15</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[64px] h-24 rounded-3xl bg-white border border-slate-100 shadow-sm">
+<span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Ven</span>
+<span class="text-xl font-black text-anthracite">16</span>
+</div>
+</div>
+<!-- Session List -->
+<main class="px-7 py-4 space-y-6 flex-1">
+<div class="flex items-center justify-between">
+<h3 class="text-[19px] font-extrabold text-anthracite">Séances de la semaine</h3>
+<span class="text-slate-400 font-bold text-[13px]">3 séances</span>
+</div>
+<!-- Lundi Card (Completed) -->
+<div class="group relative bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-5">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-positive-soft text-positive uppercase tracking-wide">
+                                Complété
+                            </span>
+<span class="material-symbols-outlined text-positive text-base fill-1">check_circle</span>
+</div>
+<h4 class="text-lg font-extrabold text-anthracite">Lundi - Force</h4>
+<div class="flex items-center gap-4 text-slate-400 font-bold text-[12px]">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-lg">schedule</span> 45 min</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-lg">bolt</span> Haute</span>
+</div>
+</div>
+<div class="size-20 rounded-2xl overflow-hidden ring-4 ring-slate-50">
+<img class="w-full h-full object-cover" data-alt="Haltérophile effectuant un exercice de force en salle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd-ppCd9S3ZYSjDLo1ZM3sPMJ8iJlm-dAo5_6T2qx7AyveKursbV9Hv3_qKuwOJntp7-XW6zZBTTNZAXHOLhP7DtVwMyRQMXHPqsj4glfK_U-4RKZldgSYw3WnO1kujhaiE4_FzUo7DC34rJjKQwXKhuEGgjhhaDQaeQSmfQ3YkItyvvc3Lv7shqz_Ra0dN28OzLOdfEYhpYpe2qbggrv_H5wc3k3DR7X8HLkgqF7SHLrv2p-C77suNPONgzwslef_iPHWXJGpUc3U"/>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 h-12 rounded-2xl bg-slate-50 text-slate-600 text-sm font-extrabold hover:bg-slate-100 transition-colors">Détails</button>
+<button class="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-xl">share</span>
+</button>
+</div>
+</div>
+<!-- Mardi Card (Rest) -->
+<div class="bg-white/50 p-6 rounded-3xl border border-dashed border-slate-200 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="bg-slate-100 p-3.5 rounded-2xl text-slate-400">
+<span class="material-symbols-outlined text-2xl">bedtime</span>
+</div>
+<div>
+<h4 class="text-[17px] font-extrabold text-anthracite">Mardi - Repos</h4>
+<p class="text-[13px] font-medium text-slate-400">Récupération active conseillée</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300">chevron_right</span>
+</div>
+<!-- Mercredi Card (Upcoming) -->
+<div class="group bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col gap-6 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary uppercase tracking-wide">
+                                À venir
+                            </span>
+</div>
+<h4 class="text-lg font-extrabold text-anthracite">Mercredi - Cardio</h4>
+<div class="flex items-center gap-4 text-slate-400 font-bold text-[12px]">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-lg">schedule</span> 30 min</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-lg">bolt</span> Moyenne</span>
+</div>
+</div>
+<div class="size-20 rounded-2xl overflow-hidden ring-4 ring-slate-50">
+<img class="w-full h-full object-cover" data-alt="Coureur s'entraînant sur une piste d'athlétisme" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQwZoinVzGqvBiGRy0OAoYYcCtQPTvDMvVOQUNKQBr22VAGBfVqv4z0wDd49p1v4thZNJkW0yYA22fJPQT55q8ShEnl_9ZvrZUYwNYzDifu3uprV8xW7OMuMWaMY5Jg_PZlLu8P9DiJoFNf_uYlDJQV5AVUWqH8d37NR8DZnQ-eGCgsfy_0YD6QvQVw0I2uY79AnWjae0Chh4CdSZxSxd-p8IcnWlL1k1mqhdtFyiIZR-rAGiFk27nSarpQZUwE_Uj3NGuXJyprz_V"/>
+</div>
+</div>
+<button class="w-full h-14 bg-gradient-to-r from-primary to-secondary text-white rounded-2xl font-extrabold text-sm shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined fill-1 text-xl">play_circle</span>
+                    Démarrer la séance
+                </button>
+</div>
+</main>
+<!-- Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 px-8 pt-4 pb-8 max-w-md mx-auto flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-primary" href="#">
+<span class="material-symbols-outlined fill-1 text-2xl">fitness_center</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Séances</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Stats</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Profil</span>
+</a>
+</nav>
+</div>
+</body></html>

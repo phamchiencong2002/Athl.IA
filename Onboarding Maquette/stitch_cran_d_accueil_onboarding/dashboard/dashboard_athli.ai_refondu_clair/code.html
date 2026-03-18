@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3B82F6",
+                        "secondary": "#7C3AED",
+                        "positive": "#10B981",
+                        "anthracite": "#1E293B",
+                        "background-light": "#F9FAFB",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "card": "1.75rem", // 28px
+                        "button": "1.5rem", // 24px
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB;
+            color: #1E293B;
+            min-height: 100dvh;
+        }
+        .text-anthracite { color: #1E293B; }
+        .bg-positive-soft { background-color: rgba(16, 185, 129, 0.1); }
+        .text-positive { color: #10B981; }
+        .rounded-3xl { border-radius: 1.75rem; }
+    </style>
+</head>
+<body class="font-display">
+<div class="max-w-md mx-auto min-h-screen flex flex-col pb-28">
+<!-- Header -->
+<header class="flex items-center justify-between px-7 pt-10 pb-6">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-full ring-2 ring-primary/10 p-0.5 overflow-hidden">
+<img alt="Photo de profil" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB79lD15zKvJQEmQ0Pcpj5TAVdUb-MN9R5RmMirX4fHfa2Yp48fzYl7CxEeLsTDyP_3UsPMKMIKz3TkOkLz7VfQNan1iy9aIWmmw8nbAxshqF2yVdkGqHhyUyILJAZ7gLzzTmud8Ndj9Dasb5ijuRBVmRz-NPWdvA_FBUERrYlWb-f-x0Dqo8x2TgSLgP5BvlbYxm-nvTIQ4WHZ0TDGuiTsZ2R2FNWWBdVHbHLo43oKfUDDiy8ZNkKhcjINrTmY-LmkxE-F7WCzZqPt"/>
+</div>
+<div>
+<h1 class="text-xl font-extrabold tracking-tight text-anthracite">Bonjour, Alex 👋</h1>
+<p class="text-[13px] text-slate-500 font-medium">Lundi, 24 Mai</p>
+</div>
+</div>
+<button class="size-11 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-600 shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="px-6 space-y-8">
+<!-- Forme du jour Card -->
+<div class="bg-white rounded-3xl p-7 shadow-sm border border-slate-100 relative overflow-hidden">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="text-[19px] font-extrabold text-anthracite">Forme du jour</h2>
+<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold bg-positive-soft text-positive mt-2 uppercase tracking-wide">
+<span class="size-2 rounded-full bg-positive mr-2"></span>
+                            Prêt pour l'entraînement
+                        </span>
+</div>
+<button class="text-primary text-[13px] font-bold hover:underline">Détails</button>
+</div>
+<div class="flex flex-col items-center justify-center py-2">
+<div class="relative size-44 rounded-full flex items-center justify-center">
+<!-- Advanced Circular Progress -->
+<svg class="absolute inset-0 size-full -rotate-90">
+<circle class="text-slate-50" cx="88" cy="88" fill="transparent" r="78" stroke="currentColor" stroke-width="14"></circle>
+<defs>
+<lineargradient id="scoreGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#3B82F6"></stop>
+<stop offset="100%" stop-color="#7C3AED"></stop>
+</lineargradient>
+</defs>
+<circle cx="88" cy="88" fill="transparent" r="78" stroke="url(#scoreGradient)" stroke-dasharray="490" stroke-dashoffset="73.5" stroke-linecap="round" stroke-width="14"></circle>
+</svg>
+<div class="text-center z-10 flex flex-col items-center">
+<span class="text-5xl font-black text-anthracite tracking-tighter leading-none">85</span>
+<span class="text-[14px] font-bold text-slate-400 mt-1">Readiness</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-10 pt-8 border-t border-slate-50">
+<div class="text-center">
+<p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Sommeil</p>
+<p class="text-[15px] font-extrabold text-anthracite">7h 45m</p>
+</div>
+<div class="text-center border-x border-slate-50">
+<p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Récup</p>
+<p class="text-[15px] font-extrabold text-positive">92%</p>
+</div>
+<div class="text-center">
+<p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Stress</p>
+<p class="text-[15px] font-extrabold text-anthracite">Bas</p>
+</div>
+</div>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full h-[72px] bg-gradient-to-r from-primary to-secondary text-white rounded-3xl font-extrabold text-lg shadow-xl shadow-primary/30 flex items-center justify-center gap-4 active:scale-[0.97] transition-all">
+<span class="material-symbols-outlined fill-1 text-2xl">play_circle</span>
+                Commencer ma séance
+            </button>
+<!-- Ma Progression -->
+<section class="space-y-5">
+<div class="flex items-center justify-between">
+<h3 class="text-[19px] font-extrabold text-anthracite">Ma progression</h3>
+<button class="size-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">trending_up</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Calories Card -->
+<div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+<p class="text-[12px] font-bold text-slate-400 mb-2">Calories</p>
+<div class="flex items-baseline gap-2 mb-4">
+<span class="text-[22px] font-black text-anthracite">1,840</span>
+<span class="text-[11px] text-positive font-bold">+12%</span>
+</div>
+<div class="flex items-end gap-1.5 h-16">
+<div class="flex-1 bg-primary/10 rounded-full h-[40%]"></div>
+<div class="flex-1 bg-primary/10 rounded-full h-[60%]"></div>
+<div class="flex-1 bg-primary/10 rounded-full h-[35%]"></div>
+<div class="flex-1 bg-primary/30 rounded-full h-[80%]"></div>
+<div class="flex-1 bg-gradient-to-t from-primary to-secondary rounded-full h-[100%]"></div>
+</div>
+</div>
+<!-- Weight Card -->
+<div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+<p class="text-[12px] font-bold text-slate-400 mb-2">Poids (kg)</p>
+<div class="flex items-baseline gap-2 mb-4">
+<span class="text-[22px] font-black text-anthracite">78.5</span>
+<span class="text-[11px] text-primary font-bold">-0.8</span>
+</div>
+<div class="flex items-end gap-1.5 h-16">
+<div class="flex-1 bg-slate-50 rounded-full h-[95%]"></div>
+<div class="flex-1 bg-slate-50 rounded-full h-[90%]"></div>
+<div class="flex-1 bg-slate-100 rounded-full h-[85%]"></div>
+<div class="flex-1 bg-slate-100 rounded-full h-[80%]"></div>
+<div class="flex-1 bg-primary rounded-full h-[75%]"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 px-8 pt-4 pb-8 max-w-md mx-auto flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1.5 text-primary" href="#">
+<span class="material-symbols-outlined fill-1 text-2xl">grid_view</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">fitness_center</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Séances</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Stats</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Profil</span>
+</a>
+</nav>
+</div>
+</body></html>

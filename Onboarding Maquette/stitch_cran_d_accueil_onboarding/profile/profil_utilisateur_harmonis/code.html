@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3B82F6",
+                        "secondary": "#7C3AED",
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "1.875rem", // 30px approximated
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .active-tab {
+            color: #3B82F6;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light text-slate-900 font-display">
+<div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto bg-background-light shadow-2xl overflow-hidden">
+<!-- Header -->
+<div class="flex items-center px-6 pt-8 pb-4 justify-between">
+<h1 class="text-2xl font-bold tracking-tight text-slate-900">Profil</h1>
+<button class="flex items-center justify-center rounded-2xl bg-white p-2 shadow-sm border border-slate-100">
+<span class="material-symbols-outlined text-slate-600">settings</span>
+</button>
+</div>
+<!-- User Info -->
+<div class="flex flex-col items-center px-6 py-4">
+<div class="relative">
+<div class="size-28 rounded-2xl bg-gradient-to-tr from-primary to-secondary p-1">
+<div class="size-full rounded-2xl bg-center bg-no-repeat bg-cover" data-alt="Portrait photo of a young athletic woman named Alex" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCm0YQH8QoQaaSAl6Nn5u3KORL1bKeipQEgo7zpwkttm37fJWkH1wYjcPkwJwqmFNsuCh3Mms148_iUhyAk7AXixP_Zxy6_eGfXI_pVJHQtYgm2Q6L557Kq70iwUc7tC9x1rNza_mHq3J2geymJ7PlzRYBbIKBY-TwPqnbvrS9eu1TR33PYK3dnVG4mSim9A2M9BtwBjl2d_jTj1LWMoV40q6LLCdOdRaf5Ztrq4ujAOCwjArvbdg7Hm4Oq8L3ngUYO76yxQdnuo1vo')"></div>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-xl border-4 border-background-light">
+<span class="material-symbols-outlined text-sm block">verified</span>
+</div>
+</div>
+<div class="mt-4 text-center">
+<h2 class="text-xl font-bold text-slate-900">Alex</h2>
+<p class="text-slate-500 text-sm">alex@athli.ai</p>
+</div>
+</div>
+<!-- Stats Quick Row -->
+<div class="grid grid-cols-2 gap-4 px-6 py-4">
+<div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+<span class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Niveau</span>
+<span class="text-secondary font-bold text-lg">Avancé</span>
+</div>
+<div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+<span class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Équipement</span>
+<span class="text-primary font-bold text-lg">Complet</span>
+</div>
+</div>
+<!-- Current Goal -->
+<div class="px-6 py-4">
+<h3 class="text-slate-900 text-lg font-bold mb-3">Objectif actuel</h3>
+<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-slate-900 font-bold">Marathon de Paris</p>
+<p class="text-slate-500 text-xs italic">Échéance : 12 Mars</p>
+</div>
+<span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-lg">80%</span>
+</div>
+<div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 80%"></div>
+</div>
+<p class="text-slate-500 text-xs mt-3">60km sur 75km cette semaine</p>
+</div>
+</div>
+</div>
+<!-- Menu List -->
+<div class="px-6 py-4 space-y-2 mb-24">
+<a class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-50 hover:bg-slate-50 transition-colors group" href="#">
+<div class="size-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+<span class="material-symbols-outlined">workspace_premium</span>
+</div>
+<span class="flex-1 font-medium text-slate-700">Abonnement Premium</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-50 hover:bg-slate-50 transition-colors group" href="#">
+<div class="size-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
+<span class="material-symbols-outlined">insights</span>
+</div>
+<span class="flex-1 font-medium text-slate-700">Statistiques détaillées</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-50 hover:bg-slate-50 transition-colors group" href="#">
+<div class="size-10 rounded-xl bg-green-50 text-green-500 flex items-center justify-center">
+<span class="material-symbols-outlined">health_metrics</span>
+</div>
+<span class="flex-1 font-medium text-slate-700">Connecter Santé</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-50 hover:bg-slate-50 transition-colors group" href="#">
+<div class="size-10 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center">
+<span class="material-symbols-outlined">tune</span>
+</div>
+<span class="flex-1 font-medium text-slate-700">Paramètres</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+</div>
+<!-- Bottom Navigation -->
+<div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/80 backdrop-blur-lg border-t border-slate-100 px-6 py-4 flex justify-between items-center rounded-t-3xl">
+<a class="flex flex-col items-center gap-1 text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Séances</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Stats</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">person</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Profil</span>
+<div class="size-1 bg-primary rounded-full mt-0.5"></div>
+</a>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3B82F6",
+                        "secondary": "#7C3AED",
+                        "positive": "#10B981",
+                        "anthracite": "#1E293B",
+                        "background-light": "#F9FAFB",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "card": "1.75rem", // 28px
+                        "button": "1.5rem", // 24px
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB;
+            color: #1E293B;
+            min-height: 100dvh;
+        }
+        .text-anthracite { color: #1E293B; }
+        .bg-positive-soft { background-color: rgba(16, 185, 129, 0.1); }
+        .text-positive { color: #10B981; }
+        .rounded-card { border-radius: 1.75rem; }
+    </style>
+</head>
+<body class="font-display">
+<div class="max-w-md mx-auto min-h-screen flex flex-col pb-28">
+<!-- Header -->
+<header class="flex items-center justify-between px-7 pt-10 pb-6">
+<button class="size-11 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-600 shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<h2 class="text-xl font-extrabold tracking-tight text-anthracite">Analyse de ta forme</h2>
+<div class="size-11"></div> <!-- Spacer for alignment -->
+</header>
+<!-- Main Content -->
+<main class="px-6 space-y-6">
+<!-- Main Score Hero Card -->
+<div class="bg-white rounded-card p-8 shadow-sm border border-slate-100 relative overflow-hidden">
+<div class="flex justify-between items-start mb-6">
+<div>
+<p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Score Readiness</p>
+<h1 class="text-6xl font-black text-anthracite tracking-tighter leading-none">84</h1>
+</div>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide">Athli.AI</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-3 rounded-full bg-positive"></div>
+<p class="text-[19px] font-extrabold text-anthracite">Excellente forme</p>
+</div>
+<!-- Decorative Visual -->
+<div class="absolute -bottom-10 -right-10 size-40 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full blur-3xl"></div>
+</div>
+<!-- IA Advice Card -->
+<div class="bg-primary/5 border border-primary/10 rounded-card p-6 flex gap-4 items-start">
+<div class="bg-primary text-white size-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-xl">psychology</span>
+</div>
+<div>
+<h4 class="text-primary font-extrabold text-sm uppercase tracking-wide">Conseil de l'IA</h4>
+<p class="text-slate-600 text-[14px] mt-1.5 leading-relaxed font-medium">
+                    Aujourd'hui, mise sur une séance d'intensité modérée. Ton corps est prêt pour l'effort mais une récupération active optimisera tes performances de demain.
+                </p>
+</div>
+</div>
+<!-- Score Breakdown -->
+<section class="space-y-4 pt-2">
+<h3 class="text-[19px] font-extrabold text-anthracite">Répartition du score</h3>
+<div class="space-y-5">
+<!-- Sommeil -->
+<div class="bg-white p-5 rounded-card border border-slate-100 shadow-sm">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-positive text-xl">bedtime</span>
+<p class="text-[15px] font-bold text-anthracite">Sommeil</p>
+</div>
+<p class="text-[15px] font-black text-positive">85/100</p>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden mb-3">
+<div class="h-full bg-positive rounded-full" style="width: 85%;"></div>
+</div>
+<p class="text-slate-400 text-[12px] font-medium leading-tight">Sommeil profond suffisant, récupération optimale.</p>
+</div>
+<!-- Stress -->
+<div class="bg-white p-5 rounded-card border border-slate-100 shadow-sm">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-xl">vital_signs</span>
+<p class="text-[15px] font-bold text-anthracite">Stress</p>
+</div>
+<p class="text-[15px] font-black text-secondary">62/100</p>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden mb-3">
+<div class="h-full bg-gradient-to-r from-primary to-secondary rounded-full" style="width: 62%;"></div>
+</div>
+<p class="text-slate-400 text-[12px] font-medium leading-tight">Vitesse de variation cardiaque stable.</p>
+</div>
+<!-- Fatigue -->
+<div class="bg-white p-5 rounded-card border border-slate-100 shadow-sm">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-xl">battery_charging_80</span>
+<p class="text-[15px] font-bold text-anthracite">Fatigue</p>
+</div>
+<p class="text-[15px] font-black text-primary">78/100</p>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden mb-3">
+<div class="h-full bg-primary rounded-full" style="width: 78%;"></div>
+</div>
+<p class="text-slate-400 text-[12px] font-medium leading-tight">Légère fatigue musculaire détectée.</p>
+</div>
+</div>
+</section>
+<!-- History Button -->
+<button class="w-full h-[64px] bg-slate-100 hover:bg-slate-200 text-anthracite rounded-card font-extrabold text-[15px] flex items-center justify-center gap-3 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-xl">history</span>
+            Voir les détails historiques
+        </button>
+</main>
+<!-- Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 px-8 pt-4 pb-8 max-w-md mx-auto flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">fitness_center</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Séances</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-primary" href="#">
+<span class="material-symbols-outlined fill-1 text-2xl">analytics</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Stats</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+<span class="text-[10px] font-extrabold uppercase tracking-tighter">Profil</span>
+</a>
+</nav>
+</div>
+</body></html>
