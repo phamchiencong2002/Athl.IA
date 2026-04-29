@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import ScreenContainer from '../components/ui/ScreenContainer';
 import colors from '../constants/colors';
@@ -27,11 +27,7 @@ export default function LoginScreen() {
     try {
       const auth = await login({ mail, password });
       await signIn(auth.token, auth.refreshToken, auth.account.id, auth.account.username);
-      Alert.alert(
-        'Connexion réussie',
-        `Bienvenue ${auth.account.username}.`,
-        [{ text: 'OK', onPress: () => router.replace('/dashboard') }],
-      );
+      router.replace('/dashboard');
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);

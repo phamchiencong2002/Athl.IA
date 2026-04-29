@@ -1,12 +1,32 @@
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image, SafeAreaView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
 import BottomNav from '../../components/ui/BottomNav';
+import { useAuth } from '../../context/AuthContext';
+import { getUserProfile } from '../../lib/users';
 
 export default function ProfileScreen() {
+  const { token, username } = useAuth();
+  const [mail, setMail] = useState('');
+  const [mainGoal, setMainGoal] = useState('');
+  const [trainingExperience, setTrainingExperience] = useState('');
+
+  useEffect(() => {
+    if (!token) return;
+    getUserProfile(token)
+      .then((data) => {
+        setMail(data.mail ?? '');
+        if (data.profile) {
+          setMainGoal(data.profile.main_goal ?? '');
+          setTrainingExperience(data.profile.training_experience ?? '');
+        }
+      })
+      .catch(() => {});
+  }, [token]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Header */}
@@ -40,8 +60,8 @@ export default function ProfileScreen() {
             </View>
           </View>
           <View style={styles.userTextCont}>
-            <Text style={styles.userName}>Alex</Text>
-            <Text style={styles.userEmail}>alex@athli.ai</Text>
+            <Text style={styles.userName}>{username ?? ''}</Text>
+            <Text style={styles.userEmail}>{mail}</Text>
           </View>
         </TouchableOpacity>
 
@@ -49,11 +69,11 @@ export default function ProfileScreen() {
         <View style={styles.statsRow}>
           <View style={styles.statMiniCard}>
             <Text style={styles.statLabel}>Niveau</Text>
-            <Text style={[styles.statValue, { color: '#7C3AED' }]}>Avancé</Text>
+            <Text style={[styles.statValue, { color: '#7C3AED' }]}>{trainingExperience || '—'}</Text>
           </View>
           <View style={styles.statMiniCard}>
-            <Text style={styles.statLabel}>Équipement</Text>
-            <Text style={[styles.statValue, { color: colors.primaryBlue }]}>Complet</Text>
+            <Text style={styles.statLabel}>Objectif</Text>
+            <Text style={[styles.statValue, { color: colors.primaryBlue }]}>{mainGoal || '—'}</Text>
           </View>
         </View>
 
@@ -96,11 +116,11 @@ export default function ProfileScreen() {
             <MaterialIcons name="chevron-right" size={24} color="#94A3B8" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8} onPress={() => router.push('/weight')}>
             <View style={[styles.menuIconBox, { backgroundColor: '#F0FDF4' }]}>
-              <MaterialIcons name="monitor-heart" size={24} color="#22C55E" />
+              <MaterialIcons name="monitor-weight" size={24} color="#22C55E" />
             </View>
-            <Text style={styles.menuItemText}>Connecter Santé</Text>
+            <Text style={styles.menuItemText}>Suivi du poids</Text>
             <MaterialIcons name="chevron-right" size={24} color="#94A3B8" />
           </TouchableOpacity>
 

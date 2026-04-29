@@ -1,16 +1,79 @@
 import { router } from 'expo-router';
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image, SafeAreaView, TextInput } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image, SafeAreaView, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
 import PrimaryButton from '../../components/ui/PrimaryButton';
+import { useAuth } from '../../context/AuthContext';
+import { getUserProfile, createUserProfile, CreateUserPayload } from '../../lib/users';
 
 export default function EditProfileScreen() {
-  const [firstName, setFirstName] = useState('Alex');
-  const [email, setEmail] = useState('alex.fit@example.com');
-  const [objective, setObjective] = useState('Hypertrophie');
-  const [level, setLevel] = useState('Avancé');
+  const { token, accountId, username } = useAuth();
+  const [mail, setMail] = useState('');
+  const [objective, setObjective] = useState('');
+  const [level, setLevel] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Holds unchanged profile fields so we don't overwrite them on save
+  const storedProfile = useRef<Omit<CreateUserPayload, 'id_account' | 'main_goal' | 'training_experience'>>({});
+
+  useEffect(() => {
+    if (!token) return;
+    getUserProfile(token)
+      .then((data) => {
+        setMail(data.mail ?? '');
+        if (data.profile) {
+          setObjective(data.profile.main_goal ?? '');
+          setLevel(data.profile.training_experience ?? '');
+          storedProfile.current = {
+            gender: data.profile.gender,
+            birthdate: data.profile.birthdate ?? undefined,
+            height_cm: data.profile.height_cm,
+            weight_kg: data.profile.weight_kg,
+            sport: data.profile.sport,
+            week_availability: data.profile.week_availability,
+            equipment: data.profile.equipment,
+            health: data.profile.health,
+            sleep: data.profile.sleep,
+            stress: data.profile.stress,
+            load: data.profile.load,
+            recovery: data.profile.recovery,
+          };
+        }
+      })
+      .catch(() => {
+        Alert.alert('Erreur', 'Impossible de charger le profil.');
+      })
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  const handleSave = async () => {
+    if (!token || !accountId) return;
+    setSaving(true);
+    try {
+      await createUserProfile(token, {
+        id_account: accountId,
+        ...storedProfile.current,
+        main_goal: objective,
+        training_experience: level,
+      });
+      router.back();
+    } catch {
+      Alert.alert('Erreur', 'Impossible de sauvegarder les modifications.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={[styles.safeArea, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={colors.primaryBlue} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -36,31 +99,29 @@ export default function EditProfileScreen() {
             </View>
           </TouchableOpacity>
           <View style={styles.nameHeader}>
-            <Text style={styles.nameHeaderTitle}>Alex</Text>
+            <Text style={styles.nameHeaderTitle}>{username ?? ''}</Text>
             <TouchableOpacity>
               <Text style={styles.editPhotoText}>Modifier la photo</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Form Fields */}
+        {/* Read-only account fields */}
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Prénom</Text>
+          <Text style={styles.label}>Nom d'utilisateur</Text>
           <TextInput
-            style={styles.input}
-            value={firstName}
-            onChangeText={setFirstName}
-            placeholder="Prénom"
+            style={[styles.input, styles.inputReadOnly]}
+            value={username ?? ''}
+            editable={false}
           />
         </View>
 
         <View style={styles.formGroup}>
           <Text style={styles.label}>Email</Text>
           <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Email"
+            style={[styles.input, styles.inputReadOnly]}
+            value={mail}
+            editable={false}
             keyboardType="email-address"
             autoCapitalize="none"
           />
@@ -152,7 +213,8 @@ export default function EditProfileScreen() {
       <View style={styles.floatingContainer}>
         <PrimaryButton
           title="Sauvegarder les modifications"
-          onPress={() => router.back()}
+          onPress={handleSave}
+          loading={saving}
         />
       </View>
     </SafeAreaView>
@@ -191,7 +253,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.xl,
-    paddingBottom: 140, // Space for floating button
+    paddingBottom: 140,
   },
   pictureSection: {
     alignItems: 'center',
@@ -264,6 +326,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
     color: '#0F172A',
+  },
+  inputReadOnly: {
+    backgroundColor: '#F1F5F9',
+    color: '#94A3B8',
   },
   gridCards: {
     flexDirection: 'row',

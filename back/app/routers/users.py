@@ -21,6 +21,43 @@ def _require_account_id(authorization: str | None) -> str:
     return token["sub"]
 
 
+@router.get("/users/me")
+def get_user_profile(
+    authorization: str | None = Header(default=None),
+    db: Session = Depends(get_db),
+) -> dict:
+    account_id = _require_account_id(authorization)
+
+    account = db.query(Account).filter(Account.id == account_id).first()
+    if not account:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+
+    profile = db.query(UserProfile).filter(UserProfile.account_id == account_id).first()
+
+    return {
+        "id": account.id,
+        "username": account.username,
+        "mail": account.mail,
+        "avatar": account.avatar,
+        "profile": {
+            "gender": profile.gender,
+            "birthdate": profile.birthdate.isoformat() if profile.birthdate else None,
+            "height_cm": profile.height_cm,
+            "weight_kg": profile.weight_kg,
+            "training_experience": profile.training_experience,
+            "sport": profile.sport,
+            "main_goal": profile.main_goal,
+            "week_availability": profile.week_availability,
+            "equipment": profile.equipment,
+            "health": profile.health,
+            "sleep": profile.sleep,
+            "stress": profile.stress,
+            "load": profile.load,
+            "recovery": profile.recovery,
+        } if profile else None,
+    }
+
+
 @router.post("/users")
 def upsert_user_profile(
     payload: UserProfileIn,
