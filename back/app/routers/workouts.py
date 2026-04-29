@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.models import Account, Exercise, WorkoutSession
+from app.models import Account, Exercise, Injury, UserProfile, WorkoutSession
 from app.schemas import GenerateProgramIn, ProgramOut, SessionFeedbackIn, SessionOut
 from app.services.program_service import ensure_seed_exercises, generate_program
 
@@ -18,7 +18,21 @@ def create_program(payload: GenerateProgramIn, db: Session = Depends(get_db)) ->
         raise HTTPException(status_code=404, detail="Account not found")
 
     ensure_seed_exercises(db)
-    program = generate_program(db, payload.account_id, payload.goal, payload.week_availability)
+    profile = db.query(UserProfile).filter(UserProfile.account_id == payload.account_id).first()
+    injuries = (
+        db.query(Injury)
+        .filter(Injury.account_id == payload.account_id, Injury.is_active.is_(True))
+        .order_by(Injury.created_at.desc())
+        .all()
+    )
+    program = generate_program(
+        db,
+        payload.account_id,
+        payload.goal,
+        payload.week_availability,
+        profile=profile,
+        injuries=injuries,
+    )
     sessions = (
         db.query(WorkoutSession)
         .filter(WorkoutSession.program_id == program.id)
@@ -59,10 +73,30 @@ def get_today_session(account_id: str, db: Session = Depends(get_db)) -> dict:
     return {
         "id": session.id,
         "name": session.name,
+        "session_date": session.session_date.isoformat(),
         "planned_duration_min": session.planned_duration_min,
         "planned_intensity": session.planned_intensity,
         "adjusted_intensity": session.adjusted_intensity,
         "status": session.status,
+        "notes": session.notes,
+    }
+
+
+@router.get("/sessions/{session_id}")
+def get_session_by_id(session_id: str, db: Session = Depends(get_db)) -> dict:
+    session = db.query(WorkoutSession).filter(WorkoutSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    return {
+        "id": session.id,
+        "name": session.name,
+        "session_date": session.session_date.isoformat(),
+        "planned_duration_min": session.planned_duration_min,
+        "planned_intensity": session.planned_intensity,
+        "adjusted_intensity": session.adjusted_intensity,
+        "status": session.status,
+        "notes": session.notes,
     }
 
 

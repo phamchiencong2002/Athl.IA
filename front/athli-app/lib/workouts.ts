@@ -8,6 +8,7 @@ export type Session = {
   planned_intensity: number;
   adjusted_intensity: number;
   status: string;
+  notes?: string | null;
 };
 
 export function generateProgram(token: string, payload: { account_id: string; goal: string; week_availability: number }) {
@@ -19,9 +20,31 @@ export function generateProgram(token: string, payload: { account_id: string; go
 }
 
 export function getTodaySession(accountId: string) {
-  return apiFetch<{ id: string; name: string; planned_duration_min: number; planned_intensity: number; adjusted_intensity: number; status: string }>(
+  return apiFetch<{
+    id: string;
+    name: string;
+    session_date: string;
+    planned_duration_min: number;
+    planned_intensity: number;
+    adjusted_intensity: number;
+    status: string;
+    notes?: string | null;
+  }>(
     `/workouts/sessions/today?account_id=${encodeURIComponent(accountId)}`,
   );
+}
+
+export function getSessionById(sessionId: string) {
+  return apiFetch<{
+    id: string;
+    name: string;
+    session_date: string;
+    planned_duration_min: number;
+    planned_intensity: number;
+    adjusted_intensity: number;
+    status: string;
+    notes?: string | null;
+  }>(`/workouts/sessions/${encodeURIComponent(sessionId)}`);
 }
 
 export function completeSession(token: string, sessionId: string, payload: { rpe_reported: number; notes?: string }) {

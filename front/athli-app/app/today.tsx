@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -6,18 +6,29 @@ import ScreenContainer from '../components/ui/ScreenContainer';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
 import { useAuth } from '../context/AuthContext';
-import { completeSession, getTodaySession } from '../lib/workouts';
+import { completeSession, getSessionById, getTodaySession } from '../lib/workouts';
 
 export default function TodayScreen() {
   const { accountId, token } = useAuth();
-  const [session, setSession] = useState<{ id: string; name: string; planned_duration_min: number; planned_intensity: number; adjusted_intensity: number } | null>(null);
+  const { sessionId } = useLocalSearchParams<{ sessionId?: string }>();
+  const [session, setSession] = useState<{
+    id: string;
+    name: string;
+    session_date: string;
+    planned_duration_min: number;
+    planned_intensity: number;
+    adjusted_intensity: number;
+    status: string;
+    notes?: string | null;
+  } | null>(null);
   const [rpe, setRpe] = useState('7');
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
     if (!accountId) return;
-    getTodaySession(accountId).then(setSession).catch(() => setSession(null));
-  }, [accountId]);
+    const load = sessionId ? getSessionById(sessionId) : getTodaySession(accountId);
+    load.then(setSession).catch(() => setSession(null));
+  }, [accountId, sessionId]);
 
   const submit = async () => {
     if (!token || !session) return;
@@ -37,9 +48,11 @@ export default function TodayScreen() {
     <ScreenContainer>
       <View style={styles.card}>
         <Text style={styles.title}>{session.name}</Text>
+        <Text style={styles.row}>Date: {session.session_date}</Text>
         <Text style={styles.row}>Duree: {session.planned_duration_min} min</Text>
         <Text style={styles.row}>Intensite planifiee: {session.planned_intensity}/10</Text>
         <Text style={styles.row}>Intensite ajustee: {session.adjusted_intensity}/10</Text>
+        {session.notes ? <Text style={styles.row}>Consignes: {session.notes}</Text> : null}
 
         <TextInput style={styles.input} value={rpe} onChangeText={setRpe} keyboardType="numeric" placeholder="RPE ressenti (1-10)" />
         <TextInput style={styles.input} value={notes} onChangeText={setNotes} placeholder="Notes" multiline />

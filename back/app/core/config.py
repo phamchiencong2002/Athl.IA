@@ -13,6 +13,11 @@ class Settings:
     token_secret: str = os.getenv("TOKEN_SECRET", "athlia-dev-secret")
     access_ttl_seconds: int = int(os.getenv("ACCESS_TTL_SECONDS", 3600))
     refresh_ttl_seconds: int = int(os.getenv("REFRESH_TTL_SECONDS", 2592000))
+    ai_enabled: bool = os.getenv("AI_ENABLED", "true").lower() == "true"
+    ai_provider: str = os.getenv("AI_PROVIDER", "openai")
+    ai_api_key: str = os.getenv("AI_API_KEY", "")
+    ai_model: str = os.getenv("AI_MODEL", "gpt-5.4-mini")
+    ai_base_url: str | None = os.getenv("AI_BASE_URL") or None
 
 
 settings = Settings()

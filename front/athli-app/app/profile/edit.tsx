@@ -108,7 +108,7 @@ export default function EditProfileScreen() {
 
         {/* Read-only account fields */}
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Nom d'utilisateur</Text>
+          <Text style={styles.label}>{"Nom d'utilisateur"}</Text>
           <TextInput
             style={[styles.input, styles.inputReadOnly]}
             value={username ?? ''}

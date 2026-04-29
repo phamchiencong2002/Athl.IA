@@ -43,6 +43,22 @@ def test_today_session_found_after_generate(client, registered_user):
     assert data["status"] == "planned"
 
 
+def test_get_session_by_id(client, registered_user):
+    account_id = registered_user["account"]["id"]
+    program_resp = client.post("/workouts/programs/generate", json={
+        "account_id": account_id,
+        "goal": "health",
+        "week_availability": 3,
+    })
+    session_id = program_resp.json()["sessions"][0]["id"]
+
+    resp = client.get(f"/workouts/sessions/{session_id}")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["id"] == session_id
+    assert data["status"] == "planned"
+
+
 def test_complete_session(client, registered_user):
     account_id = registered_user["account"]["id"]
     program_resp = client.post("/workouts/programs/generate", json={

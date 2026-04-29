@@ -246,7 +246,7 @@ export default function WeightScreen() {
           {logs.length === 0 && (
             <View style={styles.emptyState}>
               <MaterialIcons name="monitor-weight" size={48} color="#CBD5E1" />
-              <Text style={styles.emptyText}>Aucune entrée pour l'instant.</Text>
+              <Text style={styles.emptyText}>{"Aucune entrée pour l'instant."}</Text>
               <Text style={styles.emptySubtext}>Ajoutez votre premier poids ci-dessus.</Text>
             </View>
           )}

@@ -221,7 +221,7 @@ export default function WorkoutsScreen() {
                   <TouchableOpacity
                     style={styles.primaryActionButton}
                     activeOpacity={0.8}
-                    onPress={() => router.push('/today')}
+                    onPress={() => router.push({ pathname: '/today', params: { sessionId: session.id } })}
                   >
                     <MaterialIcons name="play-circle-outline" size={24} color="#FFF" />
                     <Text style={styles.primaryActionText}>Démarrer la séance</Text>
