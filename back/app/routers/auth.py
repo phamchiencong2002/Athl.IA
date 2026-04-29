@@ -4,10 +4,11 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.deps import get_current_account
 from app.core.security import create_token_pair, parse_token
 from app.db.session import get_db
 from app.models import Account
-from app.schemas import AuthResponse, LoginIn, RefreshIn, RegisterIn
+from app.schemas import AccountOut, AuthResponse, LoginIn, RefreshIn, RegisterIn
 from app.utils import hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -81,6 +82,18 @@ def login(payload: LoginIn, db: Session = Depends(get_db)) -> AuthResponse:
         "statut_account": account.statut_account,
         "last_connection": account.last_connection.isoformat() if account.last_connection else None,
     })
+
+
+@router.get("/me", response_model=AccountOut)
+def me(current: Account = Depends(get_current_account)) -> AccountOut:
+    return AccountOut(
+        id=current.id,
+        username=current.username,
+        mail=current.mail,
+        avatar=current.avatar,
+        statut_account=current.statut_account,
+        last_connection=current.last_connection.isoformat() if current.last_connection else None,
+    )
 
 
 @router.post("/refresh")

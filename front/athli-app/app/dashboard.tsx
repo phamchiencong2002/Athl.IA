@@ -1,51 +1,75 @@
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, SafeAreaView } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
 import { useAuth } from '../context/AuthContext';
 import BottomNav from '../components/ui/BottomNav';
+import { getDashboardSummary, type DashboardData } from '../lib/dashboard';
 
-// Dummy data to replicate the backend payload we asked for in context-dashboard-backend.md
-const DUMMY_DATA = {
-  user: {
-    firstName: 'Alex',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB79lD15zKvJQEmQ0Pcpj5TAVdUb-MN9R5RmMirX4fHfa2Yp48fzYl7CxEeLsTDyP_3UsPMKMIKz3TkOkLz7VfQNan1iy9aIWmmw8nbAxshqF2yVdkGqHhyUyILJAZ7gLzzTmud8Ndj9Dasb5ijuRBVmRz-NPWdvA_FBUERrYlWb-f-x0Dqo8x2TgSLgP5BvlbYxm-nvTIQ4WHZ0TDGuiTsZ2R2FNWWBdVHbHLo43oKfUDDiy8ZNkKhcjINrTmY-LmkxE-F7WCzZqPt',
-  },
-  readiness: {
-    score: 85,
-    status: "Prêt pour l'entraînement",
-    sleep: '7h 45m',
-    recovery: '92%',
-    stress: 'Bas',
-  },
-  calories: {
-    current: '1,840',
-    trend: '+12%',
-  },
-  weight: {
-    current: '78.5',
-    trend: '-0.8',
-  }
-};
+function getReadinessStatus(score: number): string {
+  if (score >= 75) return "Prêt pour l'entraînement";
+  if (score >= 50) return 'Forme correcte';
+  if (score >= 30) return 'Fatigue perceptible';
+  return 'Récupération conseillée';
+}
+
+function getReadinessColor(score: number): string {
+  if (score >= 75) return '#10B981';
+  if (score >= 50) return '#F59E0B';
+  return '#EF4444';
+}
+
+function formatSleepHours(hours: number): string {
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
+function formatDate(): string {
+  return new Date().toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+}
 
 export default function DashboardScreen() {
-  const { token } = useAuth();
+  const { token, username } = useAuth();
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Simulated pull-to-refresh
-  const load = async () => {
+  const load = useCallback(async () => {
+    if (!token) return;
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const summary = await getDashboardSummary(token);
+      setData(summary);
+    } catch {
+      // Keep previous data on error
+    } finally {
       setLoading(false);
-    }, 1000);
-  };
+    }
+  }, [token]);
 
   useEffect(() => {
-    // In real app: if (!token) router.replace('/login');
+    if (!token) {
+      router.replace('/login');
+      return;
+    }
     load();
-  }, [token]);
+  }, [token, load]);
+
+  const displayName = data?.user.username ?? username ?? '…';
+  const readiness = data?.readiness;
+  const todaySession = data?.today_session;
+  const progress = data?.progress;
+  const analytics = data?.analytics;
+
+  const readinessScore = readiness?.readiness_score ?? 0;
+  const readinessColor = getReadinessColor(readinessScore);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -57,12 +81,16 @@ export default function DashboardScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <View style={styles.avatarContainer}>
-              <Image source={{ uri: DUMMY_DATA.user.avatar }} style={styles.avatar} />
+            <View style={[styles.avatarContainer, { borderColor: `${readinessColor}33` }]}>
+              <View style={[styles.avatarFallback, { backgroundColor: `${readinessColor}20` }]}>
+                <Text style={[styles.avatarLetter, { color: readinessColor }]}>
+                  {displayName.charAt(0).toUpperCase()}
+                </Text>
+              </View>
             </View>
             <View>
-              <Text style={styles.greeting}>Bonjour, {DUMMY_DATA.user.firstName} 👋</Text>
-              <Text style={styles.date}>Lundi, 24 Mai</Text>
+              <Text style={styles.greeting}>Bonjour, {displayName}</Text>
+              <Text style={styles.date}>{formatDate()}</Text>
             </View>
           </View>
           <TouchableOpacity style={styles.notificationButton}>
@@ -75,21 +103,29 @@ export default function DashboardScreen() {
           <View style={styles.formHeader}>
             <View>
               <Text style={styles.formTitle}>Forme du jour</Text>
-              <View style={styles.statusBadge}>
-                <View style={styles.statusDot} />
-                <Text style={styles.statusText}>{DUMMY_DATA.readiness.status}</Text>
-              </View>
+              {readiness ? (
+                <View style={[styles.statusBadge, { backgroundColor: `${readinessColor}18` }]}>
+                  <View style={[styles.statusDot, { backgroundColor: readinessColor }]} />
+                  <Text style={[styles.statusText, { color: readinessColor }]}>
+                    {getReadinessStatus(readinessScore).toUpperCase()}
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.statusBadge}>
+                  <Text style={styles.statusTextGray}>AUCUNE DONNÉE</Text>
+                </View>
+              )}
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/stats')}>
               <Text style={styles.detailsLink}>Détails</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Circular Score Mock */}
+          {/* Circular Score */}
           <View style={styles.scoreContainer}>
-            <View style={styles.circularScoreRing}>
+            <View style={[styles.circularScoreRing, { borderColor: readinessColor }]}>
               <View style={styles.scoreInner}>
-                <Text style={styles.scoreNumber}>{DUMMY_DATA.readiness.score}</Text>
+                <Text style={styles.scoreNumber}>{readinessScore}</Text>
                 <Text style={styles.scoreLabel}>Readiness</Text>
               </View>
             </View>
@@ -99,71 +135,143 @@ export default function DashboardScreen() {
           <View style={styles.metricsGrid}>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>Sommeil</Text>
-              <Text style={styles.metricValueBlack}>{DUMMY_DATA.readiness.sleep}</Text>
+              <Text style={styles.metricValueBlack}>
+                {readiness ? formatSleepHours(readiness.sleep_hours) : '—'}
+              </Text>
             </View>
             <View style={[styles.metricItem, styles.metricItemBorder]}>
               <Text style={styles.metricLabel}>Récup</Text>
-              <Text style={styles.metricValueGreen}>{DUMMY_DATA.readiness.recovery}</Text>
+              <Text style={[styles.metricValueBlack, { color: readinessColor }]}>
+                {readiness ? `${Math.max(0, 100 - readiness.soreness * 10)}%` : '—'}
+              </Text>
             </View>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>Stress</Text>
-              <Text style={styles.metricValueBlack}>{DUMMY_DATA.readiness.stress}</Text>
+              <Text style={styles.metricValueBlack}>
+                {readiness
+                  ? readiness.stress <= 3
+                    ? 'Bas'
+                    : readiness.stress <= 6
+                    ? 'Moyen'
+                    : 'Élevé'
+                  : '—'}
+              </Text>
             </View>
           </View>
+
+          {/* AI Advice */}
+          {readiness?.ai_advice ? (
+            <View style={styles.adviceBox}>
+              <MaterialIcons name="psychology" size={16} color={colors.primaryBlue} />
+              <Text style={styles.adviceText}>{readiness.ai_advice}</Text>
+            </View>
+          ) : null}
         </View>
 
         {/* Primary Action Button */}
-        <TouchableOpacity style={styles.primaryActionButton} activeOpacity={0.8}>
-          <MaterialIcons name="play-circle-outline" size={32} color="#FFF" />
-          <Text style={styles.primaryActionText}>Commencer ma séance</Text>
+        <TouchableOpacity
+          style={[styles.primaryActionButton, !todaySession && styles.primaryActionButtonDisabled]}
+          activeOpacity={0.8}
+          onPress={() => router.push('/today')}
+        >
+          <MaterialIcons
+            name={todaySession ? 'play-circle-outline' : 'check-circle-outline'}
+            size={32}
+            color="#FFF"
+          />
+          <Text style={styles.primaryActionText}>
+            {todaySession?.status === 'done'
+              ? 'Séance terminée'
+              : todaySession
+              ? `Commencer : ${todaySession.name}`
+              : 'Pas de séance aujourd\'hui'}
+          </Text>
         </TouchableOpacity>
 
-        {/* Ma Progression */}
+        {/* Progression */}
         <View style={styles.progressionSection}>
           <View style={styles.progressionHeader}>
             <Text style={styles.progressionTitle}>Ma progression</Text>
-            <TouchableOpacity style={styles.trendButton}>
+            <TouchableOpacity style={styles.trendButton} onPress={() => router.push('/progress')}>
               <MaterialIcons name="trending-up" size={20} color={colors.mutedDark} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.progressionGrid}>
-            {/* Calories Card */}
+            {/* Séances Card */}
             <View style={styles.progressionCard}>
-              <Text style={styles.progressionCardLabel}>Calories</Text>
+              <Text style={styles.progressionCardLabel}>Séances / semaine</Text>
               <View style={styles.progressionCardValueRow}>
-                <Text style={styles.progressionCardValue}>{DUMMY_DATA.calories.current}</Text>
-                <Text style={styles.progressionCardTrendPos}>{DUMMY_DATA.calories.trend}</Text>
+                <Text style={styles.progressionCardValue}>
+                  {analytics?.weekly_sessions_done ?? 0}
+                </Text>
+                <Text style={styles.progressionCardTrendPos}>
+                  /{analytics?.weekly_sessions_planned ?? 0}
+                </Text>
               </View>
-              {/* Dummy Bar Chart */}
               <View style={styles.barChart}>
-                <View style={[styles.bar, { height: '40%', backgroundColor: 'rgba(59, 130, 246, 0.1)' }]} />
-                <View style={[styles.bar, { height: '60%', backgroundColor: 'rgba(59, 130, 246, 0.1)' }]} />
-                <View style={[styles.bar, { height: '35%', backgroundColor: 'rgba(59, 130, 246, 0.1)' }]} />
-                <View style={[styles.bar, { height: '80%', backgroundColor: 'rgba(59, 130, 246, 0.3)' }]} />
-                <View style={[styles.bar, { height: '100%', backgroundColor: colors.primaryBlue }]} />
+                {Array.from({ length: 5 }).map((_, i) => {
+                  const done = analytics?.weekly_sessions_done ?? 0;
+                  const planned = analytics?.weekly_sessions_planned ?? 1;
+                  const pct = Math.min((i + 1) / Math.max(planned, 5), 1);
+                  const filled = (i + 1) <= done;
+                  return (
+                    <View
+                      key={i}
+                      style={[
+                        styles.bar,
+                        {
+                          height: `${40 + pct * 60}%` as any,
+                          backgroundColor: filled ? colors.primaryBlue : 'rgba(59,130,246,0.12)',
+                        },
+                      ]}
+                    />
+                  );
+                })}
               </View>
             </View>
 
-            {/* Poids Card */}
+            {/* Taux completion Card */}
             <View style={styles.progressionCard}>
-              <Text style={styles.progressionCardLabel}>Poids (kg)</Text>
+              <Text style={styles.progressionCardLabel}>Complétion</Text>
               <View style={styles.progressionCardValueRow}>
-                <Text style={styles.progressionCardValue}>{DUMMY_DATA.weight.current}</Text>
-                <Text style={styles.progressionCardTrendNeg}>{DUMMY_DATA.weight.trend}</Text>
+                <Text style={styles.progressionCardValue}>
+                  {Math.round(progress?.completion_rate ?? 0)}%
+                </Text>
+                <Text style={styles.progressionCardTrendPos}>
+                  {(progress?.average_rpe ?? 0) > 0
+                    ? `RPE ${progress!.average_rpe.toFixed(1)}`
+                    : ''}
+                </Text>
               </View>
-              {/* Dummy Bar Chart */}
               <View style={styles.barChart}>
-                <View style={[styles.bar, { height: '95%', backgroundColor: colors.surfaceLight }]} />
-                <View style={[styles.bar, { height: '90%', backgroundColor: colors.surfaceLight }]} />
-                <View style={[styles.bar, { height: '85%', backgroundColor: '#E5E7EB' }]} />
-                <View style={[styles.bar, { height: '80%', backgroundColor: '#E5E7EB' }]} />
-                <View style={[styles.bar, { height: '75%', backgroundColor: colors.primaryBlue }]} />
+                {[0.4, 0.6, 0.5, 0.8, (progress?.completion_rate ?? 0) / 100].map((h, i) => (
+                  <View
+                    key={i}
+                    style={[
+                      styles.bar,
+                      {
+                        height: `${Math.max(20, h * 100)}%` as any,
+                        backgroundColor:
+                          i === 4 ? colors.primaryBlue : 'rgba(59,130,246,0.12)',
+                      },
+                    ]}
+                  />
+                ))}
               </View>
             </View>
           </View>
-        </View>
 
+          {/* Injury risk warning */}
+          {analytics?.injury_risk_flag ? (
+            <View style={styles.riskBanner}>
+              <MaterialIcons name="warning" size={18} color="#F59E0B" />
+              <Text style={styles.riskText}>
+                Risque de blessure détecté — Privilégiez la récupération.
+              </Text>
+            </View>
+          ) : null}
+        </View>
       </ScrollView>
 
       <BottomNav activeTab="home" />
@@ -172,14 +280,8 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-  },
-  scrollContent: {
-    paddingBottom: 120, // Leave space for nav
-    paddingHorizontal: spacing.xl,
-  },
+  safeArea: { flex: 1, backgroundColor: '#F9FAFB' },
+  scrollContent: { paddingBottom: 120, paddingHorizontal: spacing.xl },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -187,37 +289,24 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     paddingBottom: spacing.lg,
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   avatarContainer: {
     width: 48,
     height: 48,
     borderRadius: 24,
     borderWidth: 2,
-    borderColor: 'rgba(59, 130, 246, 0.1)',
     overflow: 'hidden',
     padding: 2,
   },
-  avatar: {
-    width: '100%',
-    height: '100%',
+  avatarFallback: {
+    flex: 1,
     borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  greeting: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#1E293B',
-    letterSpacing: -0.5,
-  },
-  date: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#64748B',
-    marginTop: 2,
-  },
+  avatarLetter: { fontSize: 20, fontWeight: '800' },
+  greeting: { fontSize: 20, fontWeight: '800', color: '#1E293B', letterSpacing: -0.5 },
+  date: { fontSize: 13, fontWeight: '500', color: '#64748B', marginTop: 2 },
   notificationButton: {
     width: 44,
     height: 44,
@@ -252,85 +341,41 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: spacing.xl,
   },
-  formTitle: {
-    fontSize: 19,
-    fontWeight: '800',
-    color: '#1E293B',
-  },
+  formTitle: { fontSize: 19, fontWeight: '800', color: '#1E293B' },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 16,
     marginTop: 8,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
   },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#10B981',
-    marginRight: 6,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#10B981',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  detailsLink: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.primaryBlue,
-  },
-  scoreContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.sm,
-  },
+  statusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
+  statusText: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
+  statusTextGray: { fontSize: 11, fontWeight: '700', color: '#94A3B8', textTransform: 'uppercase' },
+  detailsLink: { fontSize: 13, fontWeight: '700', color: colors.primaryBlue },
+  scoreContainer: { alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm },
   circularScoreRing: {
     width: 176,
     height: 176,
     borderRadius: 88,
     borderWidth: 14,
-    borderColor: colors.primaryBlue,
-    borderTopColor: '#7C3AED',
-    borderRightColor: '#7C3AED',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  scoreInner: {
-    alignItems: 'center',
-  },
-  scoreNumber: {
-    fontSize: 48,
-    fontWeight: '900',
-    color: '#1E293B',
-    lineHeight: 52,
-  },
-  scoreLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#94A3B8',
-  },
+  scoreInner: { alignItems: 'center' },
+  scoreNumber: { fontSize: 48, fontWeight: '900', color: '#1E293B', lineHeight: 52 },
+  scoreLabel: { fontSize: 14, fontWeight: '700', color: '#94A3B8' },
   metricsGrid: {
     flexDirection: 'row',
-    marginTop: 40,
-    paddingTop: 32,
+    marginTop: 32,
+    paddingTop: 24,
     borderTopWidth: 1,
     borderTopColor: '#F8FAFC',
   },
-  metricItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  metricItemBorder: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: '#F8FAFC',
-  },
+  metricItem: { flex: 1, alignItems: 'center' },
+  metricItemBorder: { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#F8FAFC' },
   metricLabel: {
     fontSize: 10,
     fontWeight: '700',
@@ -339,20 +384,21 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginBottom: 6,
   },
-  metricValueBlack: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#1E293B',
+  metricValueBlack: { fontSize: 15, fontWeight: '800', color: '#1E293B' },
+  adviceBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginTop: 20,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F8FAFC',
   },
-  metricValueGreen: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#10B981',
-  },
+  adviceText: { flex: 1, fontSize: 13, fontWeight: '500', color: '#475569', lineHeight: 20 },
   primaryActionButton: {
     width: '100%',
     height: 72,
-    backgroundColor: colors.primaryBlue, // Mocking the gradient with solid primary for now
+    backgroundColor: colors.primaryBlue,
     borderRadius: 24,
     flexDirection: 'row',
     alignItems: 'center',
@@ -363,26 +409,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 8,
-    marginBottom: 48,
+    marginBottom: 40,
   },
-  primaryActionText: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: '800',
-  },
-  progressionSection: {
-    gap: 20,
-  },
+  primaryActionButtonDisabled: { backgroundColor: '#94A3B8', shadowOpacity: 0.1 },
+  primaryActionText: { color: '#FFF', fontSize: 17, fontWeight: '800' },
+  progressionSection: { gap: 20 },
   progressionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  progressionTitle: {
-    fontSize: 19,
-    fontWeight: '800',
-    color: '#1E293B',
-  },
+  progressionTitle: { fontSize: 19, fontWeight: '800', color: '#1E293B' },
   trendButton: {
     width: 32,
     height: 32,
@@ -391,10 +428,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  progressionGrid: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
+  progressionGrid: { flexDirection: 'row', gap: spacing.md },
   progressionCard: {
     flex: 1,
     backgroundColor: '#FFF',
@@ -408,41 +442,26 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  progressionCardLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#94A3B8',
-    marginBottom: 8,
-  },
+  progressionCardLabel: { fontSize: 12, fontWeight: '700', color: '#94A3B8', marginBottom: 8 },
   progressionCardValueRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
     gap: 8,
     marginBottom: 16,
   },
-  progressionCardValue: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: '#1E293B',
-  },
-  progressionCardTrendPos: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#10B981',
-  },
-  progressionCardTrendNeg: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.primaryBlue,
-  },
-  barChart: {
+  progressionCardValue: { fontSize: 22, fontWeight: '900', color: '#1E293B' },
+  progressionCardTrendPos: { fontSize: 11, fontWeight: '700', color: '#10B981' },
+  barChart: { flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: 64 },
+  bar: { flex: 1, borderRadius: 4 },
+  riskBanner: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 6,
-    height: 64,
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: 'rgba(245,158,11,0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(245,158,11,0.25)',
+    borderRadius: 16,
+    padding: 14,
   },
-  bar: {
-    flex: 1,
-    borderRadius: 4,
-  },
+  riskText: { flex: 1, fontSize: 13, fontWeight: '600', color: '#92400E' },
 });

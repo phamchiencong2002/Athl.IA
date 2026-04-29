@@ -34,7 +34,7 @@ export default function SummaryScreen() {
     setLoading(true);
     try {
       const auth = await register({ username: data.username, mail: data.email, password: data.password });
-      await signIn(auth.token, auth.refreshToken, auth.account.id);
+      await signIn(auth.token, auth.refreshToken, auth.account.id, auth.account.username);
 
       await createUserProfile(auth.token, {
         id_account: auth.account.id,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     padding: spacing.xl,
-    paddingTop: spacing.xxl,
+    paddingTop: spacing.xl * 2,
   },
   titleContainer: {
     marginBottom: 48,

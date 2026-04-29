@@ -22,6 +22,6 @@ export function createUserProfile(token: string, payload: CreateUserPayload) {
   return apiFetch("/users", {
     method: "POST",
     token,
-    body: payload,
+    body: payload as unknown as Record<string, unknown>,
   });
 }

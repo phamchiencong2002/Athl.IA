@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -117,3 +118,38 @@ class AnalyticsOut(BaseModel):
     weekly_sessions_planned: int
     injury_risk_flag: bool
     next_session_intensity: int | None
+
+
+class WeightLogIn(BaseModel):
+    weight_kg: float = Field(gt=0, le=500)
+
+
+class WeightLogOut(BaseModel):
+    id: str
+    log_date: date
+    weight_kg: float
+
+
+class ReadinessDetailOut(BaseModel):
+    readiness_score: int
+    ai_advice: str
+    sleep_hours: float
+    fatigue: int
+    stress: int
+    soreness: int
+    pain_level: int
+    log_date: str
+
+
+class DashboardUserOut(BaseModel):
+    id: str
+    username: str
+    avatar: Optional[str]
+
+
+class DashboardOut(BaseModel):
+    user: DashboardUserOut
+    readiness: Optional[ReadinessDetailOut]
+    today_session: Optional[SessionOut]
+    analytics: AnalyticsOut
+    progress: ProgressOut

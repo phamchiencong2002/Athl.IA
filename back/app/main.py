@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 from app.core.config import settings
 from app.core.logging import setup_logging
 from app.db.base import init_db
-from app.routers import analytics, auth, injuries, readiness, users, workouts
+from app.routers import analytics, auth, dashboard, injuries, readiness, users, weight, workouts
 
 setup_logging()
 logger = logging.getLogger("athlia-api")
@@ -55,12 +55,19 @@ def root() -> dict:
             "/auth/register",
             "/auth/login",
             "/auth/refresh",
+            "/auth/me",
             "/users",
             "/workouts/programs/generate",
+            "/workouts/sessions/today",
+            "/workouts/sessions",
             "/readiness",
+            "/readiness/latest",
+            "/readiness/history",
             "/injuries",
             "/progress/{account_id}",
             "/analytics/{account_id}",
+            "/dashboard/summary",
+            "/weight-logs",
         ],
     }
 
@@ -76,3 +83,5 @@ app.include_router(workouts.router)
 app.include_router(readiness.router)
 app.include_router(injuries.router)
 app.include_router(analytics.router)
+app.include_router(dashboard.router)
+app.include_router(weight.router)

@@ -26,7 +26,7 @@ export default function LoginScreen() {
     setError(null);
     try {
       const auth = await login({ mail, password });
-      await signIn(auth.token, auth.refreshToken, auth.account.id);
+      await signIn(auth.token, auth.refreshToken, auth.account.id, auth.account.username);
       Alert.alert(
         'Connexion réussie',
         `Bienvenue ${auth.account.username}.`,

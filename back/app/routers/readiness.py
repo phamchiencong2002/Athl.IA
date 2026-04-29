@@ -57,6 +57,30 @@ def submit_readiness(payload: ReadinessIn, db: Session = Depends(get_db)) -> Rea
     return ReadinessOut(readiness_score=score, ai_advice=advice)
 
 
+@router.get("/history")
+def readiness_history(account_id: str, limit: int = 30, db: Session = Depends(get_db)) -> list[dict]:
+    logs = (
+        db.query(ReadinessLog)
+        .filter(ReadinessLog.account_id == account_id)
+        .order_by(ReadinessLog.log_date.desc())
+        .limit(min(limit, 90))
+        .all()
+    )
+    return [
+        {
+            "log_date": log.log_date.isoformat(),
+            "sleep_hours": log.sleep_hours,
+            "fatigue": log.fatigue,
+            "stress": log.stress,
+            "soreness": log.soreness,
+            "pain_level": log.pain_level,
+            "readiness_score": log.readiness_score,
+            "ai_advice": log.ai_advice,
+        }
+        for log in logs
+    ]
+
+
 @router.get("/latest")
 def latest_readiness(account_id: str, db: Session = Depends(get_db)) -> dict:
     log = (

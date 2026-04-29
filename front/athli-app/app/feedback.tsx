@@ -36,21 +36,23 @@ export default function FeedbackScreen() {
     <ScreenContainer>
       <View style={styles.card}>
         <Text style={styles.title}>Feedback quotidien</Text>
-        {[
-          ['Sommeil (h)', sleepHours, setSleepHours, 0, 12],
-          ['Fatigue', fatigue, setFatigue, 0, 10],
-          ['Stress', stress, setStress, 0, 10],
-          ['Courbatures', soreness, setSoreness, 0, 10],
-          ['Douleur', pain, setPain, 0, 10],
-        ].map(([label, value, setter, min, max]) => (
-          <View key={label as string}>
-            <Text style={styles.label}>{label}: {value as number}</Text>
+        {(
+          [
+            { label: 'Sommeil (h)', value: sleepHours, setter: setSleepHours, min: 0, max: 12 },
+            { label: 'Fatigue', value: fatigue, setter: setFatigue, min: 0, max: 10 },
+            { label: 'Stress', value: stress, setter: setStress, min: 0, max: 10 },
+            { label: 'Courbatures', value: soreness, setter: setSoreness, min: 0, max: 10 },
+            { label: 'Douleur', value: pain, setter: setPain, min: 0, max: 10 },
+          ] as { label: string; value: number; setter: (v: number) => void; min: number; max: number }[]
+        ).map(({ label, value, setter, min, max }) => (
+          <View key={label}>
+            <Text style={styles.label}>{label}: {value}</Text>
             <Slider
-              minimumValue={min as number}
-              maximumValue={max as number}
+              minimumValue={min}
+              maximumValue={max}
               step={1}
-              value={value as number}
-              onValueChange={setter as (v: number) => void}
+              value={value}
+              onValueChange={setter}
               minimumTrackTintColor={colors.success}
             />
           </View>

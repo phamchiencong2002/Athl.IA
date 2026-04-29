@@ -122,3 +122,13 @@ class Injury(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
     profile: Mapped[UserProfile | None] = relationship(back_populates="injuries")
+
+
+class WeightLog(Base):
+    __tablename__ = "weight_logs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    account_id: Mapped[str] = mapped_column(String(36), ForeignKey("accounts.id"), index=True)
+    log_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    weight_kg: Mapped[float] = mapped_column(Float, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
