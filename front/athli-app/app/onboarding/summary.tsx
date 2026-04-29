@@ -47,6 +47,11 @@ function formatSelection(values: string[], labels: Record<string, string>, empty
   return values.map((value) => labels[value] ?? value).join(', ');
 }
 
+function compactList(values: string[], labels: Record<string, string>, emptyLabel: string) {
+  if (!values.length) return emptyLabel;
+  return values.map((value) => labels[value] ?? value).join('/');
+}
+
 export default function SummaryScreen() {
   const { data, update, reset } = useOnboarding();
   const { signIn } = useAuth();
@@ -85,20 +90,20 @@ export default function SummaryScreen() {
     const locations = data.locations || [];
     const equipment = data.equipment || [];
     const equipmentSummary = [
-      locations.length ? `Lieux: ${locations.join(', ')}` : null,
-      equipment.length ? `Équipement: ${equipment.join(', ')}` : null,
+      locations.length ? `lieux:${locations.join('/')}` : null,
+      equipment.length ? `mat:${equipment.join('/')}` : null,
     ]
       .filter(Boolean)
       .join(' | ');
     const healthSummary = [
-      protectedZones.length ? `Zones à protéger: ${formatSelection(protectedZones, ZONE_LABELS, '')}` : null,
+      protectedZones.length ? `zones:${compactList(protectedZones, ZONE_LABELS, '')}` : null,
       movementLimitations.length
-        ? `Mouvements à éviter: ${formatSelection(movementLimitations, LIMITATION_LABELS, '')}`
+        ? `limites:${compactList(movementLimitations, LIMITATION_LABELS, '')}`
         : null,
     ]
       .filter(Boolean)
       .join(' | ');
-    const baselineSummary = `Pompes max: ${data.baseline.pushups}; Squats max: ${data.baseline.squats}; Gainage: ${data.baseline.plank}s`;
+    const baselineSummary = `P${data.baseline.pushups}-S${data.baseline.squats}-G${data.baseline.plank}s`;
 
     setLoading(true);
     try {

@@ -135,6 +135,23 @@ def test_weight_log_unauthorized(client):
     assert resp.status_code == 401
 
 
+def test_user_profile_clamps_long_text_fields(client, registered_user, auth_headers):
+    account_id = registered_user["account"]["id"]
+    resp = client.post("/users", json={
+        "id_account": account_id,
+        "gender": "H",
+        "training_experience": "intermediate",
+        "main_goal": "muscle",
+        "week_availability": 4,
+        "health": "Zones à protéger: Cheville | Mouvements à éviter: Charge lourde",
+        "load": "Pompes max: 25; Squats max: 50; Gainage: 60s",
+    }, headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data["health"]) <= 40
+    assert len(data["load"]) <= 40
+
+
 def test_injuries_crud(client, registered_user, auth_headers):
     account_id = registered_user["account"]["id"]
     resp = client.post("/injuries", json={
