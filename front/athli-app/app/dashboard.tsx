@@ -37,7 +37,7 @@ function formatDate(): string {
 }
 
 export default function DashboardScreen() {
-  const { token, username } = useAuth();
+  const { token, username, loading: authLoading } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -55,12 +55,13 @@ export default function DashboardScreen() {
   }, [token]);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!token) {
-      router.replace('/login');
+      router.replace('/');
       return;
     }
     load();
-  }, [token, load]);
+  }, [token, authLoading, load]);
 
   const displayName = data?.user.username ?? username ?? '…';
   const readiness = data?.readiness;
