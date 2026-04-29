@@ -15,12 +15,13 @@ const FREQUENCIES = [
 
 export default function FrequencyScreen() {
   const { data, update } = useOnboarding();
+  const canContinue = data.weekAvailability > 0;
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: '100%' }]} />
+          <View style={[styles.progressFill, { width: '50%' }]} />
         </View>
         <View style={styles.headerSub}>
           <Text style={styles.subText}>Objectif</Text>
@@ -30,7 +31,7 @@ export default function FrequencyScreen() {
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.title}>Combien de fois veux-tu t'entraîner par semaine ?</Text>
+        <Text style={styles.title}>{"Combien de fois veux-tu t'entraîner par semaine ?"}</Text>
 
         <View style={styles.grid}>
           {FREQUENCIES.map((freq) => {
@@ -53,9 +54,9 @@ export default function FrequencyScreen() {
       <View style={styles.footer}>
         <PrimaryButton
           title="Continuer"
-          // We route to the summary screen which handles API registration, user login, and generating the program
           onPress={() => router.push('/onboarding/summary')}
           style={styles.continueButton}
+          disabled={!canContinue}
         />
       </View>
     </SafeAreaView>

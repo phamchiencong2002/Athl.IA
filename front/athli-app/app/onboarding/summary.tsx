@@ -2,15 +2,50 @@ import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View, TextInput, SafeAreaView } from 'react-native';
 import PrimaryButton from '../../components/ui/PrimaryButton';
-import ScreenContainer from '../../components/ui/ScreenContainer';
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
 import { useAuth } from '../../context/AuthContext';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { ApiError } from '../../lib/api';
 import { register } from '../../lib/auth';
+import { listInjuries, reportInjury } from '../../lib/injuries';
 import { generateProgram } from '../../lib/workouts';
 import { createUserProfile } from '../../lib/users';
+
+const GOAL_LABELS: Record<string, string> = {
+  muscle: 'Prise de muscle',
+  weight_loss: 'Perte de poids',
+  fitness: 'Remise en forme',
+  performance: 'Performance',
+  mobility: 'Mobilité / Souplesse',
+  rehab: 'Rééducation légère',
+};
+
+const LEVEL_LABELS: Record<string, string> = {
+  beginner: 'Débutant',
+  intermediate: 'Intermédiaire',
+  advanced: 'Avancé',
+};
+
+const ZONE_LABELS: Record<string, string> = {
+  knee: 'Genou',
+  back: 'Dos',
+  shoulder: 'Épaule',
+  ankle: 'Cheville',
+  none: 'Aucune',
+};
+
+const LIMITATION_LABELS: Record<string, string> = {
+  impact: 'Impact',
+  rotation: 'Rotation',
+  flexion: 'Flexion profonde',
+  heavy: 'Charge lourde',
+};
+
+function formatSelection(values: string[], labels: Record<string, string>, emptyLabel: string) {
+  if (!values.length) return emptyLabel;
+  return values.map((value) => labels[value] ?? value).join(', ');
+}
 
 export default function SummaryScreen() {
   const { data, update, reset } = useOnboarding();
@@ -26,14 +61,48 @@ export default function SummaryScreen() {
   }, [data.age]);
 
   const submit = async () => {
-    if (!data.username || !data.email || !data.password) {
+    const username = data.username.trim();
+    const email = data.email.trim().toLowerCase();
+    const password = data.password.trim();
+
+    if (!username || !email || !password) {
       Alert.alert('Erreur', 'Veuillez remplir vos identifiants pour créer votre compte.');
       return;
     }
 
+    if (!data.goal || !data.weekAvailability) {
+      Alert.alert('Erreur', 'Complète les étapes précédentes avant de finaliser ton onboarding.');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      Alert.alert('Erreur', 'Veuillez saisir une adresse email valide.');
+      return;
+    }
+
+    const protectedZones = (data.protectedZones || []).filter((zone) => zone !== 'none');
+    const movementLimitations = data.movementLimitations || [];
+    const locations = data.locations || [];
+    const equipment = data.equipment || [];
+    const equipmentSummary = [
+      locations.length ? `Lieux: ${locations.join(', ')}` : null,
+      equipment.length ? `Équipement: ${equipment.join(', ')}` : null,
+    ]
+      .filter(Boolean)
+      .join(' | ');
+    const healthSummary = [
+      protectedZones.length ? `Zones à protéger: ${formatSelection(protectedZones, ZONE_LABELS, '')}` : null,
+      movementLimitations.length
+        ? `Mouvements à éviter: ${formatSelection(movementLimitations, LIMITATION_LABELS, '')}`
+        : null,
+    ]
+      .filter(Boolean)
+      .join(' | ');
+    const baselineSummary = `Pompes max: ${data.baseline.pushups}; Squats max: ${data.baseline.squats}; Gainage: ${data.baseline.plank}s`;
+
     setLoading(true);
     try {
-      const auth = await register({ username: data.username, mail: data.email, password: data.password });
+      const auth = await register({ username, mail: email, password });
       await signIn(auth.token, auth.refreshToken, auth.account.id, auth.account.username);
 
       await createUserProfile(auth.token, {
@@ -46,13 +115,33 @@ export default function SummaryScreen() {
         sport: data.sport || '',
         main_goal: data.goal,
         week_availability: data.weekAvailability,
-        equipment: (data.equipment || []).join(','),
+        equipment: equipmentSummary || null,
+        health: healthSummary || null,
+        load: baselineSummary,
       });
+
+      if (protectedZones.length > 0) {
+        const existingInjuries = await listInjuries(auth.account.id);
+        const existingGroups = new Set(existingInjuries.map((injury) => injury.muscle_group.toLowerCase()));
+        const missingZones = protectedZones.filter((zone) => !existingGroups.has(zone.toLowerCase()));
+
+        if (missingZones.length > 0) {
+          await Promise.all(
+            missingZones.map((zone) =>
+              reportInjury(auth.token, {
+                account_id: auth.account.id,
+                muscle_group: zone,
+                pain_level: 3,
+              }),
+            ),
+          );
+        }
+      }
 
       await generateProgram(auth.token, {
         account_id: auth.account.id,
-        goal: data.goal || 'health',
-        week_availability: Math.max(1, Math.min(7, data.weekAvailability || 3)),
+        goal: data.goal,
+        week_availability: Math.max(1, Math.min(7, data.weekAvailability)),
       });
 
       reset();
@@ -103,9 +192,18 @@ export default function SummaryScreen() {
 
         <View style={styles.summaryBox}>
           <Text style={styles.summaryTitle}>Votre Profil</Text>
-          <Text style={styles.summaryText}>Objectif : {data.goal || 'Général'}</Text>
+          <Text style={styles.summaryText}>Objectif : {GOAL_LABELS[data.goal] ?? 'Non défini'}</Text>
           <Text style={styles.summaryText}>Fréquence : {data.weekAvailability || 0}x par semaine</Text>
-          <Text style={styles.summaryText}>Niveau : {data.level}</Text>
+          <Text style={styles.summaryText}>Niveau : {LEVEL_LABELS[data.level] ?? data.level}</Text>
+          <Text style={styles.summaryText}>
+            Zones à protéger : {formatSelection(data.protectedZones || [], ZONE_LABELS, 'Aucune')}
+          </Text>
+          <Text style={styles.summaryText}>
+            Mouvements à éviter : {formatSelection(data.movementLimitations || [], LIMITATION_LABELS, 'Aucun')}
+          </Text>
+          <Text style={styles.summaryText}>
+            Évaluation : {data.baseline.pushups} pompes, {data.baseline.squats} squats, {data.baseline.plank}s gainage
+          </Text>
         </View>
       </ScrollView>
 

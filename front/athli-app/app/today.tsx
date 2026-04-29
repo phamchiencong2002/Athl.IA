@@ -28,7 +28,7 @@ export default function TodayScreen() {
   if (!session) {
     return (
       <ScreenContainer>
-        <View style={styles.card}><Text style={styles.title}>Pas de seance aujourd'hui.</Text></View>
+        <View style={styles.card}><Text style={styles.title}>{"Pas de seance aujourd'hui."}</Text></View>
       </ScreenContainer>
     );
   }

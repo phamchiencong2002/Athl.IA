@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, ScrollView, View, SafeAreaView, TextInput } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import PrimaryButton from '../../components/ui/PrimaryButton';
 import colors from '../../constants/colors';
@@ -15,6 +14,8 @@ export default function BaselineScreen() {
   const updateBaseline = (key: keyof typeof baseline, value: number) => {
     update({ baseline: { ...baseline, [key]: value } });
   };
+
+  const goNext = () => router.push('/onboarding/frequency');
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -116,10 +117,10 @@ export default function BaselineScreen() {
       <View style={styles.footer}>
         <PrimaryButton
           title="Suivant"
-          onPress={() => router.push('/onboarding/frequency')}
+          onPress={goNext}
           style={styles.continueButton}
         />
-        <TouchableOpacity style={styles.skipButton} onPress={() => router.push('/onboarding/frequency')}>
+        <TouchableOpacity style={styles.skipButton} onPress={goNext}>
           <Text style={styles.skipText}>Passer cette étape</Text>
         </TouchableOpacity>
       </View>

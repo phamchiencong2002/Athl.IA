@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions } from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
-import ScreenContainer from '../components/ui/ScreenContainer';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
 import { useAuth } from '../context/AuthContext';

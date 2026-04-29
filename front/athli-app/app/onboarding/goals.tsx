@@ -18,6 +18,7 @@ const GOALS = [
 
 export default function GoalsScreen() {
   const { data, update } = useOnboarding();
+  const canContinue = Boolean(data.goal);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -37,7 +38,7 @@ export default function GoalsScreen() {
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Quel est ton objectif principal ?</Text>
           <Text style={styles.subtitle}>
-            Choisis l'option qui te correspond le mieux pour personnaliser ton expérience.
+            {"Choisis l'option qui te correspond le mieux pour personnaliser ton expérience."}
           </Text>
         </View>
 
@@ -70,6 +71,7 @@ export default function GoalsScreen() {
           title="Continuer"
           onPress={() => router.push('/onboarding/bodymap')}
           style={styles.continueButton}
+          disabled={!canContinue}
         />
       </View>
     </SafeAreaView>

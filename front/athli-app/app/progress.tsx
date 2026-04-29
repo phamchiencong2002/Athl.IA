@@ -173,8 +173,8 @@ export default function ProgressScreen() {
             <View style={styles.riskTextBlock}>
               <Text style={styles.riskTitle}>Risque de blessure détecté</Text>
               <Text style={styles.riskDesc}>
-                Ton niveau de douleur ou de fatigue est élevé. Privilégie la récupération active
-                et réduis l'intensité de tes prochaines séances.
+                {"Ton niveau de douleur ou de fatigue est élevé. Privilégie la récupération active"}
+                {" et réduis l'intensité de tes prochaines séances."}
               </Text>
             </View>
           </View>
@@ -189,7 +189,7 @@ export default function ProgressScreen() {
         <View style={styles.actions}>
           <TouchableOpacity style={styles.actionBtn} onPress={() => router.push('/stats')}>
             <MaterialIcons name="analytics" size={20} color={colors.primaryBlue} />
-            <Text style={styles.actionBtnText}>Voir l'analyse de forme</Text>
+            <Text style={styles.actionBtnText}>{"Voir l'analyse de forme"}</Text>
             <MaterialIcons name="chevron-right" size={20} color="#94A3B8" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={() => router.push('/history')}>

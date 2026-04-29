@@ -121,7 +121,7 @@ export default function StatsScreen() {
               <MaterialIcons name="psychology" size={20} color="#FFF" />
             </View>
             <View style={styles.adviceTextCont}>
-              <Text style={styles.adviceTitle}>Conseil de l'IA</Text>
+              <Text style={styles.adviceTitle}>{"Conseil de l'IA"}</Text>
               <Text style={styles.adviceText}>{readiness.ai_advice}</Text>
             </View>
           </View>

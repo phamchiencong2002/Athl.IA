@@ -8,7 +8,7 @@ import { listSessions, Session } from '../lib/workouts';
 
 export default function HistoryScreen() {
   const { accountId } = useAuth();
-  const [sessions, setSessions] = useState<Array<Session & { rpe_reported?: number | null }>>([]);
+  const [sessions, setSessions] = useState<(Session & { rpe_reported?: number | null })[]>([]);
 
   useEffect(() => {
     if (!accountId) return;
