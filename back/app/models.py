@@ -90,6 +90,27 @@ class WorkoutSession(Base):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     program: Mapped[WorkoutProgram] = relationship(back_populates="sessions")
+    exercises: Mapped[list["SessionExercise"]] = relationship(
+        back_populates="session",
+        order_by="SessionExercise.order_index",
+        cascade="all, delete-orphan",
+    )
+
+
+class SessionExercise(Base):
+    __tablename__ = "session_exercises"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    session_id: Mapped[str] = mapped_column(String(36), ForeignKey("workout_sessions.id"), index=True)
+    order_index: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    sets: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    reps: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    equipment: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    muscle_groups: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    session: Mapped[WorkoutSession] = relationship(back_populates="exercises")
 
 
 class ReadinessLog(Base):

@@ -15,6 +15,17 @@ except ImportError:  # pragma: no cover - handled via runtime fallback
 logger = logging.getLogger("athlia-ai")
 
 
+class GeneratedExerciseItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=2, max_length=100)
+    sets: int = Field(ge=1, le=8)
+    reps: str = Field(max_length=20)  # "12-15", "30s", "10/côté"
+    equipment: str = Field(default="", max_length=80)
+    muscle_groups: str = Field(default="", max_length=120)
+    notes: str = Field(default="", max_length=200)
+
+
 class GeneratedSessionContent(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -23,6 +34,7 @@ class GeneratedSessionContent(BaseModel):
     planned_intensity: int = Field(ge=1, le=10)
     focus: str = Field(default="", max_length=160)
     notes: str = Field(default="", max_length=500)
+    exercises: list[GeneratedExerciseItem] = Field(default_factory=list)
 
 
 class GeneratedProgramContent(BaseModel):
@@ -36,13 +48,26 @@ class GeneratedProgramContent(BaseModel):
 def ai_generation_enabled() -> bool:
     return (
         settings.ai_enabled
-        and settings.ai_provider.lower() == "openai"
+        and settings.ai_provider.lower() in {"openai", "ollama"}
         and bool(settings.ai_api_key.strip())
         and OpenAI is not None
     )
 
 
 def _build_schema() -> dict[str, Any]:
+    exercise_schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["name", "sets", "reps", "equipment", "muscle_groups", "notes"],
+        "properties": {
+            "name": {"type": "string"},
+            "sets": {"type": "integer"},
+            "reps": {"type": "string"},
+            "equipment": {"type": "string"},
+            "muscle_groups": {"type": "string"},
+            "notes": {"type": "string"},
+        },
+    }
     return {
         "type": "object",
         "additionalProperties": False,
@@ -61,6 +86,7 @@ def _build_schema() -> dict[str, Any]:
                         "planned_intensity",
                         "focus",
                         "notes",
+                        "exercises",
                     ],
                     "properties": {
                         "name": {"type": "string"},
@@ -68,6 +94,10 @@ def _build_schema() -> dict[str, Any]:
                         "planned_intensity": {"type": "integer"},
                         "focus": {"type": "string"},
                         "notes": {"type": "string"},
+                        "exercises": {
+                            "type": "array",
+                            "items": exercise_schema,
+                        },
                     },
                 },
             },
@@ -76,17 +106,23 @@ def _build_schema() -> dict[str, Any]:
 
 
 def _build_messages(context: dict[str, Any]) -> list[dict[str, str]]:
+    schema_str = json.dumps(_build_schema(), ensure_ascii=False)
     system_message = (
-        "You are an elite sports performance planner. "
-        "Return valid JSON only. Build a realistic training program in French. "
-        "Respect injuries, protected zones, movement limitations, available equipment, level, "
-        "goal, and weekly frequency. Avoid dangerous exercise choices. Keep session names short."
+        "Tu es un coach sportif expert. "
+        "Réponds UNIQUEMENT avec du JSON valide correspondant exactement au schéma ci-dessous. "
+        "Crée un programme d'entraînement réaliste en français. "
+        "Respecte absolument les blessures et zones à protéger (n'inclus JAMAIS d'exercices sollicitant une zone blessée), "
+        "le matériel disponible (n'utilise que le matériel listé), le niveau, l'objectif et la fréquence hebdomadaire. "
+        "Pour chaque séance, fournis 4 à 6 exercices spécifiques avec séries, répétitions/durée, "
+        "matériel utilisé, groupes musculaires et éventuellement des notes. "
+        "Les noms de séances doivent être courts et descriptifs.\n\n"
+        f"SCHEMA JSON REQUIS:\n{schema_str}"
     )
     user_message = (
-        "Create a 4-week workout program as JSON. "
-        "The JSON must match the provided schema exactly and contain exactly the requested number "
-        "of sessions in chronological training order.\n\n"
-        f"PROGRAM_CONTEXT_JSON:\n{json.dumps(context, ensure_ascii=False)}"
+        "Crée un programme en JSON. "
+        "Le JSON doit correspondre exactement au schéma et contenir exactement le nombre "
+        "de séances indiqué dans total_sessions, dans l'ordre chronologique.\n\n"
+        f"CONTEXT_JSON:\n{json.dumps(context, ensure_ascii=False)}"
     )
     return [
         {"role": "system", "content": system_message},
@@ -105,21 +141,15 @@ def generate_ai_program_content(context: dict[str, Any]) -> GeneratedProgramCont
     )
 
     try:
-        response = client.responses.create(
+        response = client.chat.completions.create(
             model=settings.ai_model,
-            input=_build_messages(context),
-            text={
-                "format": {
-                    "type": "json_schema",
-                    "name": "athlia_program",
-                    "strict": True,
-                    "schema": _build_schema(),
-                }
-            },
+            messages=_build_messages(context),
+            response_format={"type": "json_object"},
+            temperature=0.2,
         )
-        raw_payload = getattr(response, "output_text", "") or ""
+        raw_payload = (response.choices[0].message.content or "") if response.choices else ""
         if not raw_payload:
-            logger.warning("AI response returned no output_text")
+            logger.warning("AI response returned no content")
             return None
 
         parsed = json.loads(raw_payload)

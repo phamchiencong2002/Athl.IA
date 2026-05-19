@@ -11,6 +11,7 @@ import { register } from '../../lib/auth';
 import { listInjuries, reportInjury } from '../../lib/injuries';
 import { generateProgram } from '../../lib/workouts';
 import { createUserProfile } from '../../lib/users';
+import { saveUserProfile } from '../../lib/localSessionService';
 
 const GOAL_LABELS: Record<string, string> = {
   muscle: 'Prise de muscle',
@@ -147,6 +148,13 @@ export default function SummaryScreen() {
         account_id: auth.account.id,
         goal: data.goal,
         week_availability: Math.max(1, Math.min(7, data.weekAvailability)),
+      });
+
+      await saveUserProfile({
+        goal: data.goal,
+        equipment: data.equipment || [],
+        protectedZones: (data.protectedZones || []).filter((z) => z !== 'none'),
+        movementLimitations: data.movementLimitations || [],
       });
 
       reset();

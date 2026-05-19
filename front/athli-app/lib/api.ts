@@ -10,11 +10,12 @@ export class ApiError extends Error {
 }
 
 const baseUrl = (process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000').replace(/\/$/, '');
+console.log('[API] baseUrl:', baseUrl);
 
 type RequestOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   token?: string;
-  body?: Record<string, unknown> | FormData;
+  body?: Record<string, unknown> | unknown[] | FormData;
   headers?: Record<string, string>;
 };
 
@@ -70,6 +71,7 @@ export async function apiFetch<TResponse>(
   }
 
   const text = await response.text();
+  console.log(`[API] ${options.method ?? 'GET'} ${path} → ${response.status}`, text.slice(0, 300));
   const data = text ? (JSON.parse(text) as unknown) : null;
 
   if (!response.ok) {

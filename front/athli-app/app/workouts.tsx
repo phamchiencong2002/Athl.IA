@@ -14,7 +14,8 @@ import colors from '../constants/colors';
 import spacing from '../constants/spacing';
 import { useAuth } from '../context/AuthContext';
 import BottomNav from '../components/ui/BottomNav';
-import { listSessions, type Session } from '../lib/workouts';
+import ExerciseDetailModal from '../components/ui/ExerciseDetailModal';
+import { listSessions, type ExerciseItem, type Session } from '../lib/workouts';
 
 const DAY_NAMES_FR = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 const MONTH_NAMES_FR = [
@@ -53,6 +54,8 @@ export default function WorkoutsScreen() {
   const [sessions, setSessions] = useState<(Session & { rpe_reported?: number | null })[]>([]);
   const [selectedDate, setSelectedDate] = useState(toISODate(new Date()));
   const [loading, setLoading] = useState(false);
+  const [modalSession, setModalSession] = useState<Session | null>(null);
+  const [modalExercises, setModalExercises] = useState<ExerciseItem[]>([]);
 
   const weekDays = getWeekDays();
 
@@ -174,6 +177,8 @@ export default function WorkoutsScreen() {
         ) : (
           sessionsForSelectedDate.map((session) => {
             const isDone = session.status === 'done';
+            const exs = session.exercises ?? [];
+            const previewExs = exs.slice(0, 3);
             return (
               <View
                 key={session.id}
@@ -208,25 +213,57 @@ export default function WorkoutsScreen() {
                         <Text style={styles.sessionMetaText}>RPE {session.rpe_reported}/10</Text>
                       )}
                     </View>
+
+                    {/* Exercise preview */}
+                    {previewExs.length > 0 && (
+                      <View style={styles.exercisePreview}>
+                        {previewExs.map((ex, i) => (
+                          <View key={i} style={styles.exercisePreviewRow}>
+                            <View style={styles.exercisePreviewDot} />
+                            <Text style={styles.exercisePreviewText} numberOfLines={1}>
+                              {ex.name}
+                              {ex.sets != null && ex.reps ? ` — ${ex.sets}×${ex.reps}` : ''}
+                            </Text>
+                          </View>
+                        ))}
+                        {exs.length > 3 && (
+                          <Text style={styles.exercisePreviewMore}>+{exs.length - 3} autres</Text>
+                        )}
+                      </View>
+                    )}
                   </View>
                 </View>
 
-                {isDone ? (
-                  <View style={styles.cardActions}>
-                    <View style={[styles.secondaryBtn, { backgroundColor: 'rgba(16,185,129,0.08)' }]}>
+                <View style={styles.cardActions}>
+                  {/* "Voir les exercices" button */}
+                  {exs.length > 0 && (
+                    <TouchableOpacity
+                      style={styles.secondaryBtn}
+                      activeOpacity={0.8}
+                      onPress={() => {
+                        setModalSession(session);
+                        setModalExercises(exs);
+                      }}
+                    >
+                      <Text style={styles.secondaryBtnText}>Exercices</Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {isDone ? (
+                    <View style={[styles.secondaryBtn, { backgroundColor: 'rgba(16,185,129,0.08)', flex: 1 }]}>
                       <Text style={[styles.secondaryBtnText, { color: '#10B981' }]}>Terminée</Text>
                     </View>
-                  </View>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.primaryActionButton}
-                    activeOpacity={0.8}
-                    onPress={() => router.push({ pathname: '/today', params: { sessionId: session.id } })}
-                  >
-                    <MaterialIcons name="play-circle-outline" size={24} color="#FFF" />
-                    <Text style={styles.primaryActionText}>Démarrer la séance</Text>
-                  </TouchableOpacity>
-                )}
+                  ) : (
+                    <TouchableOpacity
+                      style={[styles.primaryActionButton, exs.length > 0 && { flex: 1 }]}
+                      activeOpacity={0.8}
+                      onPress={() => router.push({ pathname: '/today', params: { sessionId: session.id } })}
+                    >
+                      <MaterialIcons name="play-circle-outline" size={20} color="#FFF" />
+                      <Text style={styles.primaryActionText}>Démarrer</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             );
           })
@@ -263,6 +300,25 @@ export default function WorkoutsScreen() {
       </ScrollView>
 
       <BottomNav activeTab="workouts" />
+
+      {/* Exercise detail modal */}
+      {modalSession && (
+        <ExerciseDetailModal
+          visible={!!modalSession}
+          sessionId={modalSession.id}
+          sessionName={modalSession.name}
+          exercises={modalExercises}
+          onClose={() => setModalSession(null)}
+          onExercisesUpdated={(updated) => {
+            setSessions((prev) =>
+              prev.map((s) =>
+                s.id === modalSession.id ? { ...s, exercises: updated } : s,
+              ),
+            );
+            setModalExercises(updated);
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -447,6 +503,14 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   primaryActionText: { color: '#FFF', fontSize: 14, fontWeight: '800' },
+
+  // Exercise preview in session card
+  exercisePreview: { gap: 4, marginTop: 4 },
+  exercisePreviewRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  exercisePreviewDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.primaryBlue, opacity: 0.5 },
+  exercisePreviewText: { fontSize: 12, color: '#64748B', flex: 1 },
+  exercisePreviewMore: { fontSize: 11, color: '#94A3B8', fontStyle: 'italic', marginTop: 2 },
+
   allSessionsSection: { gap: 8, marginTop: 8 },
   allSessionsTitle: { fontSize: 15, fontWeight: '700', color: '#64748B', marginBottom: 4 },
   miniSessionRow: {

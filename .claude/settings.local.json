@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\c1tru\\\\OneDrive\\\\Documents\\\\Athl.IA\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(ls /mnt/c/Users/c1tru/OneDrive/Documents/Athl.IA/front/athli-app/components/ui/ 2>&1)",
+      "Read(//mnt/c/Users/c1tru/OneDrive/Documents/Athl.IA/front/athli-app/components/**)",
+      "Bash(docker compose *)",
+      "Bash(npx tsc *)",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__apply_migration"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}

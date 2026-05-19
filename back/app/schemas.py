@@ -57,6 +57,17 @@ class GenerateProgramIn(BaseModel):
     week_availability: int = Field(ge=1, le=7)
 
 
+class SessionExerciseOut(BaseModel):
+    id: str
+    order_index: int
+    name: str
+    sets: Optional[int]
+    reps: Optional[str]
+    equipment: Optional[str]
+    muscle_groups: Optional[str]
+    notes: Optional[str]
+
+
 class SessionOut(BaseModel):
     id: str
     name: str
@@ -65,6 +76,8 @@ class SessionOut(BaseModel):
     planned_intensity: int
     adjusted_intensity: int
     status: str
+    notes: Optional[str] = None
+    exercises: list[SessionExerciseOut] = []
 
 
 class ProgramOut(BaseModel):
