@@ -38,7 +38,7 @@ export default function SettingsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <MaterialIcons name="arrow-back" size={24} color={colors.contentDark} />
+          <MaterialIcons name="arrow-back" size={24} color={colors.contentLight} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Paramètres</Text>
         <View style={styles.headerSpacer} />

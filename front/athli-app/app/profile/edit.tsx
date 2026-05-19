@@ -2,6 +2,21 @@ import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image, SafeAreaView, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+
+const OBJECTIVES = [
+  { id: 'muscle',      label: 'Prise de muscle',      icon: 'fitness-center' },
+  { id: 'weight_loss', label: 'Perte de poids',        icon: 'monitor-weight' },
+  { id: 'fitness',     label: 'Remise en forme',       icon: 'favorite' },
+  { id: 'performance', label: 'Performance',           icon: 'trending-up' },
+  { id: 'mobility',    label: 'Mobilité / Souplesse',  icon: 'self-improvement' },
+  { id: 'rehab',       label: 'Rééducation légère',    icon: 'healing' },
+] as const;
+
+const LEVELS = [
+  { id: 'beginner',     label: 'Débutant',      emoji: '🐢' },
+  { id: 'intermediate', label: 'Intermédiaire', emoji: '🏃' },
+  { id: 'advanced',     label: 'Avancé',        emoji: '⚡️' },
+] as const;
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
 import PrimaryButton from '../../components/ui/PrimaryButton';
@@ -11,6 +26,7 @@ import { getUserProfile, createUserProfile, CreateUserPayload } from '../../lib/
 export default function EditProfileScreen() {
   const { token, accountId, username } = useAuth();
   const [mail, setMail] = useState('');
+  const [avatar, setAvatar] = useState<string | null>(null);
   const [objective, setObjective] = useState('');
   const [level, setLevel] = useState('');
   const [loading, setLoading] = useState(true);
@@ -24,6 +40,7 @@ export default function EditProfileScreen() {
     getUserProfile(token)
       .then((data) => {
         setMail(data.mail ?? '');
+        setAvatar(data.avatar ?? null);
         if (data.profile) {
           setObjective(data.profile.main_goal ?? '');
           setLevel(data.profile.training_experience ?? '');
@@ -80,7 +97,7 @@ export default function EditProfileScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <MaterialIcons name="arrow-back" size={24} color={colors.contentDark} />
+          <MaterialIcons name="arrow-back" size={24} color={colors.contentLight} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Modifier le Profil</Text>
         <View style={styles.headerSpacer} />
@@ -90,17 +107,22 @@ export default function EditProfileScreen() {
         {/* Profile Picture Section */}
         <View style={styles.pictureSection}>
           <TouchableOpacity style={styles.avatarContainer} activeOpacity={0.8}>
-            <Image
-              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDAUE6-d_h6UP3FcdoHAIduQlwCQzNwhpcEdBbqAvH7eY7Whzf6b-RVNEEu7uIKtTr3v6FGtDBujQ_oehAPMEQHk3VIRG7zg0_o4OXwoC_Q5vHgF-zjilHQW1WBUqRU9IRvv2XoH5K4lVPlCTzk5gIRdsemkm2axkvwDdhRaXvP0gmV-MlxELN4d5F5TOZRFURGFxRnTF-wlqOGkf3rjhBwKNGttliCI7IJ3k85FXIyJ73ylZxGQtAlHUPVLFooJIUcqldQj1aN-Y2g' }}
-              style={styles.avatarImg}
-            />
+            {avatar ? (
+              <Image source={{ uri: avatar }} style={styles.avatarImg} />
+            ) : (
+              <View style={[styles.avatarImg, styles.avatarFallback]}>
+                <Text style={styles.avatarInitial}>
+                  {(username ?? '?')[0].toUpperCase()}
+                </Text>
+              </View>
+            )}
             <View style={styles.cameraBadge}>
               <MaterialIcons name="photo-camera" size={16} color="#FFF" />
             </View>
           </TouchableOpacity>
           <View style={styles.nameHeader}>
             <Text style={styles.nameHeaderTitle}>{username ?? ''}</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => Alert.alert('Bientôt disponible', 'La modification de photo arrive prochainement.')}>
               <Text style={styles.editPhotoText}>Modifier la photo</Text>
             </TouchableOpacity>
           </View>
@@ -131,81 +153,44 @@ export default function EditProfileScreen() {
         <View style={styles.formGroup}>
           <Text style={styles.label}>Objectif</Text>
           <View style={styles.gridCards}>
-            <TouchableOpacity
-              style={[styles.objectiveCard, objective === 'Hypertrophie' && styles.objectiveCardActive]}
-              onPress={() => setObjective('Hypertrophie')}
-              activeOpacity={0.8}
-            >
-              <MaterialIcons
-                name="fitness-center"
-                size={32}
-                color={objective === 'Hypertrophie' ? colors.primaryBlue : '#94A3B8'}
-              />
-              <Text style={[styles.objectiveCardText, objective === 'Hypertrophie' && styles.objectiveCardTextActive]}>
-                Hypertrophie
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.objectiveCard, objective === 'Perte de poids' && styles.objectiveCardActive]}
-              onPress={() => setObjective('Perte de poids')}
-              activeOpacity={0.8}
-            >
-              <MaterialIcons
-                name="bolt"
-                size={32}
-                color={objective === 'Perte de poids' ? colors.primaryBlue : '#94A3B8'}
-              />
-              <Text style={[styles.objectiveCardText, objective === 'Perte de poids' && styles.objectiveCardTextActive]}>
-                Perte de poids
-              </Text>
-            </TouchableOpacity>
+            {OBJECTIVES.map((obj) => (
+              <TouchableOpacity
+                key={obj.id}
+                style={[styles.objectiveCard, objective === obj.id && styles.objectiveCardActive]}
+                onPress={() => setObjective(obj.id)}
+                activeOpacity={0.8}
+              >
+                <MaterialIcons
+                  name={obj.icon as any}
+                  size={32}
+                  color={objective === obj.id ? colors.primaryBlue : '#94A3B8'}
+                />
+                <Text style={[styles.objectiveCardText, objective === obj.id && styles.objectiveCardTextActive]}>
+                  {obj.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
         {/* Level Selection */}
         <View style={styles.formGroup}>
           <Text style={styles.label}>Niveau</Text>
-
-          <TouchableOpacity
-            style={[styles.levelCard, level === 'Intermédiaire' && styles.levelCardActive]}
-            onPress={() => setLevel('Intermédiaire')}
-            activeOpacity={0.8}
-          >
-            <View style={styles.levelCardLeft}>
-              <MaterialIcons
-                name="directions-run"
-                size={24}
-                color={level === 'Intermédiaire' ? colors.primaryBlue : '#94A3B8'}
-              />
-              <Text style={[styles.levelCardText, level === 'Intermédiaire' && styles.levelCardTextActive]}>
-                Intermédiaire
-              </Text>
-            </View>
-            <View style={[styles.radioCircle, level === 'Intermédiaire' && styles.radioCircleActive]}>
-              {level === 'Intermédiaire' && <MaterialIcons name="check" size={14} color="#FFF" />}
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.levelCard, level === 'Avancé' && styles.levelCardActive]}
-            onPress={() => setLevel('Avancé')}
-            activeOpacity={0.8}
-          >
-            <View style={styles.levelCardLeft}>
-              <MaterialIcons
-                name="military-tech"
-                size={24}
-                color={level === 'Avancé' ? colors.primaryBlue : '#94A3B8'}
-              />
-              <Text style={[styles.levelCardText, level === 'Avancé' && styles.levelCardTextActive]}>
-                Avancé
-              </Text>
-            </View>
-            <View style={[styles.radioCircle, level === 'Avancé' && styles.radioCircleActive]}>
-              {level === 'Avancé' && <MaterialIcons name="check" size={14} color="#FFF" />}
-            </View>
-          </TouchableOpacity>
+          <View style={styles.levelGrid}>
+            {LEVELS.map((lvl) => (
+              <TouchableOpacity
+                key={lvl.id}
+                style={[styles.levelCard, level === lvl.id && styles.levelCardActive]}
+                onPress={() => setLevel(lvl.id)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.levelEmoji}>{lvl.emoji}</Text>
+                <Text style={[styles.levelCardText, level === lvl.id && styles.levelCardTextActive]}>
+                  {lvl.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </ScrollView>
 
@@ -278,6 +263,16 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 60,
   },
+  avatarFallback: {
+    backgroundColor: colors.primaryBlue,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarInitial: {
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#FFF',
+  },
   cameraBadge: {
     position: 'absolute',
     bottom: 0,
@@ -333,10 +328,11 @@ const styles = StyleSheet.create({
   },
   gridCards: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12,
   },
   objectiveCard: {
-    flex: 1,
+    width: '47%',
     backgroundColor: '#FFF',
     borderWidth: 2,
     borderColor: '#F1F5F9',
@@ -358,47 +354,36 @@ const styles = StyleSheet.create({
     color: colors.primaryBlue,
     fontWeight: '800',
   },
-  levelCard: {
+  levelGrid: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: 10,
+  },
+  levelCard: {
+    flex: 1,
     backgroundColor: '#FFF',
     borderWidth: 2,
     borderColor: '#F1F5F9',
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 8,
+    paddingVertical: 16,
+    alignItems: 'center',
+    gap: 6,
   },
   levelCardActive: {
     borderColor: colors.primaryBlue,
     backgroundColor: 'rgba(59, 130, 246, 0.05)',
   },
-  levelCardLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+  levelEmoji: {
+    fontSize: 24,
   },
   levelCardText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '600',
     color: '#64748B',
+    textAlign: 'center',
   },
   levelCardTextActive: {
-    color: '#0F172A',
+    color: colors.primaryBlue,
     fontWeight: '800',
-  },
-  radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#CBD5E1',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioCircleActive: {
-    borderColor: colors.primaryBlue,
-    backgroundColor: colors.primaryBlue,
   },
   floatingContainer: {
     position: 'absolute',

@@ -1,11 +1,13 @@
 from datetime import date
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from sqlalchemy.exc import IntegrityError
+
 from app.db.session import get_db
-from app.models import ReadinessLog, UserProfile, WorkoutSession
+from app.models import Account, ReadinessLog, UserProfile, WorkoutSession
 from app.schemas import ReadinessIn, ReadinessOut
 from app.services.adaptation import build_advice, compute_readiness_score, suggest_intensity
 
@@ -14,6 +16,13 @@ router = APIRouter(prefix="/readiness", tags=["readiness"])
 
 @router.post("", response_model=ReadinessOut)
 def submit_readiness(payload: ReadinessIn, db: Session = Depends(get_db)) -> ReadinessOut:
+    account = db.query(Account).filter(Account.id == payload.account_id).first()
+    if not account:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Account not found — please log out and log back in",
+        )
+
     profile = db.query(UserProfile).filter(UserProfile.account_id == payload.account_id).first()
 
     score = compute_readiness_score(
@@ -52,7 +61,14 @@ def submit_readiness(payload: ReadinessIn, db: Session = Depends(get_db)) -> Rea
             payload.pain_level,
         )
 
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Readiness already submitted for today",
+        ) from e
 
     return ReadinessOut(readiness_score=score, ai_advice=advice)
 
@@ -90,7 +106,7 @@ def latest_readiness(account_id: str, db: Session = Depends(get_db)) -> dict:
         .first()
     )
     if not log:
-        return {}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No readiness log found")
 
     return {
         "log_date": log.log_date.isoformat(),

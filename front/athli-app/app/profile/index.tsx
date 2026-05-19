@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image, SafeAreaView } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, ScrollView, Image, SafeAreaView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
@@ -8,24 +8,54 @@ import BottomNav from '../../components/ui/BottomNav';
 import { useAuth } from '../../context/AuthContext';
 import { getUserProfile } from '../../lib/users';
 
+const GOAL_LABELS: Record<string, string> = {
+  muscle: 'Prise de muscle',
+  weight_loss: 'Perte de poids',
+  fitness: 'Remise en forme',
+  performance: 'Performance',
+  mobility: 'Mobilité / Souplesse',
+  rehab: 'Rééducation légère',
+};
+
+const LEVEL_LABELS: Record<string, string> = {
+  beginner: 'Débutant',
+  intermediate: 'Intermédiaire',
+  advanced: 'Avancé',
+};
+
 export default function ProfileScreen() {
   const { token, username } = useAuth();
   const [mail, setMail] = useState('');
+  const [avatar, setAvatar] = useState<string | null>(null);
   const [mainGoal, setMainGoal] = useState('');
   const [trainingExperience, setTrainingExperience] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!token) return;
     getUserProfile(token)
       .then((data) => {
         setMail(data.mail ?? '');
+        setAvatar(data.avatar ?? null);
         if (data.profile) {
           setMainGoal(data.profile.main_goal ?? '');
           setTrainingExperience(data.profile.training_experience ?? '');
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [token]);
+
+  const goalLabel = GOAL_LABELS[mainGoal] ?? mainGoal;
+  const levelLabel = LEVEL_LABELS[trainingExperience] ?? trainingExperience;
+
+  if (loading) {
+    return (
+      <SafeAreaView style={[styles.safeArea, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={colors.primaryBlue} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -37,7 +67,7 @@ export default function ProfileScreen() {
           onPress={() => router.push('/profile/settings')}
           activeOpacity={0.8}
         >
-          <MaterialIcons name="settings" size={24} color={colors.contentDark} />
+          <MaterialIcons name="settings" size={24} color={colors.contentLight} />
         </TouchableOpacity>
       </View>
 
@@ -50,10 +80,15 @@ export default function ProfileScreen() {
         >
           <View style={styles.avatarWrapper}>
             <View style={styles.avatarGradient}>
-              <Image
-                source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCm0YQH8QoQaaSAl6Nn5u3KORL1bKeipQEgo7zpwkttm37fJWkH1wYjcPkwJwqmFNsuCh3Mms148_iUhyAk7AXixP_Zxy6_eGfXI_pVJHQtYgm2Q6L557Kq70iwUc7tC9x1rNza_mHq3J2geymJ7PlzRYBbIKBY-TwPqnbvrS9eu1TR33PYK3dnVG4mSim9A2M9BtwBjl2d_jTj1LWMoV40q6LLCdOdRaf5Ztrq4ujAOCwjArvbdg7Hm4Oq8L3ngUYO76yxQdnuo1vo' }}
-                style={styles.avatar}
-              />
+              {avatar ? (
+                <Image source={{ uri: avatar }} style={styles.avatar} />
+              ) : (
+                <View style={[styles.avatar, styles.avatarFallback]}>
+                  <Text style={styles.avatarInitial}>
+                    {(username ?? '?')[0].toUpperCase()}
+                  </Text>
+                </View>
+              )}
             </View>
             <View style={styles.verifiedBadge}>
               <MaterialIcons name="verified" size={14} color="#FFF" />
@@ -69,11 +104,11 @@ export default function ProfileScreen() {
         <View style={styles.statsRow}>
           <View style={styles.statMiniCard}>
             <Text style={styles.statLabel}>Niveau</Text>
-            <Text style={[styles.statValue, { color: '#7C3AED' }]}>{trainingExperience || '—'}</Text>
+            <Text style={[styles.statValue, { color: '#7C3AED' }]}>{levelLabel || '—'}</Text>
           </View>
           <View style={styles.statMiniCard}>
             <Text style={styles.statLabel}>Objectif</Text>
-            <Text style={[styles.statValue, { color: colors.primaryBlue }]}>{mainGoal || '—'}</Text>
+            <Text style={[styles.statValue, { color: colors.primaryBlue }]}>{goalLabel || '—'}</Text>
           </View>
         </View>
 
@@ -85,9 +120,9 @@ export default function ProfileScreen() {
               <View style={styles.goalDecoCircle} />
               <View style={styles.goalRow}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.goalTitle}>{mainGoal}</Text>
+                  <Text style={styles.goalTitle}>{goalLabel}</Text>
                   {trainingExperience ? (
-                    <Text style={styles.goalSubtitle}>Niveau : {trainingExperience}</Text>
+                    <Text style={styles.goalSubtitle}>Niveau : {levelLabel}</Text>
                   ) : null}
                 </View>
               </View>
@@ -97,7 +132,11 @@ export default function ProfileScreen() {
 
         {/* Menu List */}
         <View style={styles.menuList}>
-          <TouchableOpacity style={styles.menuItem} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={[styles.menuItem, { opacity: 0.5 }]}
+            activeOpacity={0.8}
+            disabled
+          >
             <View style={[styles.menuIconBox, { backgroundColor: '#FFF7ED' }]}>
               <MaterialIcons name="military-tech" size={24} color="#F97316" />
             </View>
@@ -202,6 +241,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 28,
+  },
+  avatarFallback: {
+    backgroundColor: colors.primaryBlue,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarInitial: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: '#FFF',
   },
   verifiedBadge: {
     position: 'absolute',

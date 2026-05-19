@@ -1,13 +1,14 @@
 import Slider from '@react-native-community/slider';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import ScreenContainer from '../components/ui/ScreenContainer';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
 import { useAuth } from '../context/AuthContext';
 import { submitReadiness } from '../lib/readiness';
+import { ApiError } from '../lib/api';
 
 export default function FeedbackScreen() {
   const { accountId, token } = useAuth();
@@ -17,18 +18,31 @@ export default function FeedbackScreen() {
   const [stress, setStress] = useState(3);
   const [soreness, setSoreness] = useState(3);
   const [pain, setPain] = useState(2);
+  const [sending, setSending] = useState(false);
 
   const send = async () => {
     if (!accountId || !token) return;
-    await submitReadiness(token, {
-      account_id: accountId,
-      sleep_hours: sleepHours,
-      fatigue,
-      stress,
-      soreness,
-      pain_level: pain,
-    });
-    router.replace('/dashboard');
+    setSending(true);
+    try {
+      await submitReadiness(token, {
+        account_id: accountId,
+        sleep_hours: sleepHours,
+        fatigue,
+        stress,
+        soreness,
+        pain_level: pain,
+      });
+      router.replace('/dashboard');
+    } catch (err) {
+      const message = err instanceof ApiError
+        ? `Erreur ${err.status} : ${err.message}`
+        : err instanceof Error
+          ? err.message
+          : 'Impossible de soumettre le feedback.';
+      Alert.alert('Erreur', message);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -60,7 +74,7 @@ export default function FeedbackScreen() {
           </View>
         ))}
 
-        <PrimaryButton title="Envoyer" onPress={send} style={styles.button} />
+        <PrimaryButton title="Envoyer" onPress={send} loading={sending} disabled={sending} style={styles.button} />
       </View>
     </ScreenContainer>
   );
