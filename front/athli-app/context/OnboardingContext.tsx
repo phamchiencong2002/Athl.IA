@@ -20,6 +20,7 @@ export interface OnboardingData {
   // Step 4 – Equipment
   locations: string[];
   equipment: string[];
+  bandsResistance: 'light' | 'medium' | 'heavy' | null;
   // New Fields from mockups 3-7
   protectedZones: string[];
   movementLimitations: string[];
@@ -48,6 +49,7 @@ const DEFAULT_DATA: OnboardingData = {
   injuries: [],
   locations: [],
   equipment: [],
+  bandsResistance: null,
   protectedZones: [],
   movementLimitations: [],
   baseline: { pushups: 25, squats: 50, plank: 60 },
