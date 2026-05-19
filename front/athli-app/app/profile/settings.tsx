@@ -6,6 +6,28 @@ import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
 import BottomNav from '../../components/ui/BottomNav';
 import { useAuth } from '../../context/AuthContext';
+import ComingSoonFeature, { ComingSoonItem } from '../../components/ui/ComingSoonFeature';
+
+const COMING_SOON_ITEMS: ComingSoonItem[] = [
+  {
+    id: 'coach-ia',
+    icon: 'smart-toy',
+    title: 'Coach IA personnalisé',
+    subtitle: 'Recommandations adaptées en temps réel',
+  },
+  {
+    id: 'social',
+    icon: 'group',
+    title: 'Défis entre amis',
+    subtitle: 'Compare tes progrès avec ta communauté',
+  },
+  {
+    id: 'wearable',
+    icon: 'watch',
+    title: 'Sync montre connectée',
+    subtitle: 'Apple Watch & Garmin',
+  },
+];
 
 export default function SettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -111,6 +133,9 @@ export default function SettingsScreen() {
             <MaterialIcons name="chevron-right" size={24} color="#94A3B8" />
           </TouchableOpacity>
         </View>
+
+        {/* Ce qui arrive bientôt */}
+        <ComingSoonFeature items={COMING_SOON_ITEMS} />
 
         {/* Danger Zone */}
         <View style={styles.dangerZone}>
