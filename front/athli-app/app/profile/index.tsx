@@ -78,25 +78,22 @@ export default function ProfileScreen() {
         </View>
 
         {/* Current Goal */}
-        <View style={styles.goalSection}>
-          <Text style={styles.sectionTitle}>Objectif actuel</Text>
-          <View style={styles.goalCard}>
-            <View style={styles.goalDecoCircle} />
-            <View style={styles.goalRow}>
-              <View>
-                <Text style={styles.goalTitle}>Marathon de Paris</Text>
-                <Text style={styles.goalSubtitle}>Échéance : 12 Mars</Text>
-              </View>
-              <View style={styles.goalPercentageBadge}>
-                <Text style={styles.goalPercentageText}>80%</Text>
+        {mainGoal ? (
+          <View style={styles.goalSection}>
+            <Text style={styles.sectionTitle}>Objectif actuel</Text>
+            <View style={styles.goalCard}>
+              <View style={styles.goalDecoCircle} />
+              <View style={styles.goalRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.goalTitle}>{mainGoal}</Text>
+                  {trainingExperience ? (
+                    <Text style={styles.goalSubtitle}>Niveau : {trainingExperience}</Text>
+                  ) : null}
+                </View>
               </View>
             </View>
-            <View style={styles.goalProgressBarBg}>
-              <View style={[styles.goalProgressBarFill, { width: '80%' }]} />
-            </View>
-            <Text style={styles.goalProgressText}>60km sur 75km cette semaine</Text>
           </View>
-        </View>
+        ) : null}
 
         {/* Menu List */}
         <View style={styles.menuList}>
@@ -315,37 +312,6 @@ const styles = StyleSheet.create({
     color: '#64748B',
     marginTop: 2,
     fontStyle: 'italic',
-  },
-  goalPercentageBadge: {
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  goalPercentageText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: colors.primaryBlue,
-  },
-  goalProgressBarBg: {
-    height: 8,
-    backgroundColor: '#F1F5F9',
-    borderRadius: 4,
-    width: '100%',
-    overflow: 'hidden',
-    zIndex: 2,
-  },
-  goalProgressBarFill: {
-    height: '100%',
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 4,
-  },
-  goalProgressText: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#64748B',
-    marginTop: 12,
-    zIndex: 2,
   },
   menuList: {
     paddingHorizontal: spacing.xl,

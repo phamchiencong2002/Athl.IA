@@ -1,7 +1,7 @@
 from datetime import date
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
@@ -90,7 +90,7 @@ def latest_readiness(account_id: str, db: Session = Depends(get_db)) -> dict:
         .first()
     )
     if not log:
-        raise HTTPException(status_code=404, detail="No readiness found")
+        return {}
 
     return {
         "log_date": log.log_date.isoformat(),

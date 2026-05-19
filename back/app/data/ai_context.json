@@ -1,0 +1,136 @@
+{
+  "equipment": [
+    {
+      "id": "dumbbells",
+      "label": "Haltères",
+      "category": "poids_libres",
+      "exercises_enabled": ["curl biceps", "développé épaules", "rowing haltère", "lunges avec haltères", "squat gobelet"],
+      "space_required": "minimal",
+      "skill_level": "beginner"
+    },
+    {
+      "id": "barbell",
+      "label": "Barre de musculation",
+      "category": "poids_libres",
+      "exercises_enabled": ["squat barre", "soulevé de terre", "développé couché", "rowing barre", "overhead press"],
+      "space_required": "large",
+      "skill_level": "intermediate"
+    },
+    {
+      "id": "kettlebell",
+      "label": "Kettlebell",
+      "category": "poids_libres",
+      "exercises_enabled": ["kettlebell swing", "turkish get-up", "clean & press", "gobelet squat", "farmer carry"],
+      "space_required": "minimal",
+      "skill_level": "intermediate"
+    },
+    {
+      "id": "bands",
+      "label": "Élastiques",
+      "category": "resistance",
+      "exercises_enabled": ["hip thrust élastique", "abduction genoux", "pull-apart", "curl biceps élastique", "squat élastique"],
+      "space_required": "minimal",
+      "skill_level": "beginner"
+    },
+    {
+      "id": "mat",
+      "label": "Tapis de sol",
+      "category": "accessoire",
+      "exercises_enabled": ["gainage", "pompes", "abdominaux", "yoga", "étirements", "mobilité au sol"],
+      "space_required": "minimal",
+      "skill_level": "beginner"
+    }
+  ],
+  "injuries": [
+    {
+      "id": "lower_back",
+      "label": "Douleur lombaire",
+      "muscle_group": "lombaires",
+      "exercises_to_avoid": ["soulevé de terre lourd", "squat barre", "good morning"],
+      "exercises_recommended": ["gainage planche", "bird-dog", "mobilité hanches", "marche"],
+      "intensity_cap": 5,
+      "rest_days_recommended": 2
+    },
+    {
+      "id": "knee",
+      "label": "Genou douloureux",
+      "muscle_group": "genou",
+      "exercises_to_avoid": ["squat profond", "lunges", "course à pied", "sauts"],
+      "exercises_recommended": ["leg extension léger", "natation", "vélo stationnaire", "étirements ischio-jambiers"],
+      "intensity_cap": 4,
+      "rest_days_recommended": 2
+    },
+    {
+      "id": "shoulder",
+      "label": "Épaule douloureuse",
+      "muscle_group": "épaule",
+      "exercises_to_avoid": ["développé couché", "overhead press", "tractions", "développé épaules"],
+      "exercises_recommended": ["rotation externe élastique", "face pull", "renforcement coiffe rotateurs"],
+      "intensity_cap": 5,
+      "rest_days_recommended": 1
+    },
+    {
+      "id": "ankle",
+      "label": "Cheville fragile",
+      "muscle_group": "cheville",
+      "exercises_to_avoid": ["course à pied", "sauts", "squat unilatéral"],
+      "exercises_recommended": ["renforcement cheville élastique", "natation", "vélo", "proprioception"],
+      "intensity_cap": 4,
+      "rest_days_recommended": 1
+    },
+    {
+      "id": "wrist",
+      "label": "Poignet douloureux",
+      "muscle_group": "poignet",
+      "exercises_to_avoid": ["pompes", "développé couché", "planche classique"],
+      "exercises_recommended": ["gainage sur coudes", "curl biceps neutre", "exercices sans appui poignet"],
+      "intensity_cap": 6,
+      "rest_days_recommended": 1
+    },
+    {
+      "id": "hip",
+      "label": "Hanche tendue / douloureuse",
+      "muscle_group": "hanche",
+      "exercises_to_avoid": ["squat profond", "hip thrust lourd", "sprint"],
+      "exercises_recommended": ["étirements psoas", "mobilité hanche", "marche", "vélo"],
+      "intensity_cap": 5,
+      "rest_days_recommended": 1
+    },
+    {
+      "id": "neck",
+      "label": "Douleur cervicale",
+      "muscle_group": "cervicales",
+      "exercises_to_avoid": ["squat barre", "overhead press", "tractions derrière la nuque"],
+      "exercises_recommended": ["gainage", "étirements cervicaux doux", "marche"],
+      "intensity_cap": 5,
+      "rest_days_recommended": 1
+    },
+    {
+      "id": "hamstring",
+      "label": "Ischio-jambier contracturé",
+      "muscle_group": "ischio-jambiers",
+      "exercises_to_avoid": ["sprint", "soulevé de terre jambes tendues", "course rapide"],
+      "exercises_recommended": ["étirements ischio", "vélo", "leg curl léger", "nordic curl progressif"],
+      "intensity_cap": 5,
+      "rest_days_recommended": 2
+    },
+    {
+      "id": "elbow",
+      "label": "Coude douloureux (épicondylite)",
+      "muscle_group": "coude",
+      "exercises_to_avoid": ["curl biceps lourd", "extensions triceps", "rowing haltère lourd"],
+      "exercises_recommended": ["étirements avant-bras", "renforcement excentrique", "gainage"],
+      "intensity_cap": 4,
+      "rest_days_recommended": 2
+    },
+    {
+      "id": "shin_splints",
+      "label": "Périostite tibiale",
+      "muscle_group": "tibia",
+      "exercises_to_avoid": ["course à pied", "sauts", "step"],
+      "exercises_recommended": ["natation", "vélo", "renforcement mollets assis", "marche aquatique"],
+      "intensity_cap": 3,
+      "rest_days_recommended": 3
+    }
+  ]
+}

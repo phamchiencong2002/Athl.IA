@@ -1,0 +1,14 @@
+{
+  "name": "athl-ia",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "front/athli-app"
+  ],
+  "scripts": {
+    "dev": "docker compose up --build",
+    "dev:api": "python -m uvicorn app.main:app --app-dir back --host 0.0.0.0 --port 3000",
+    "dev:front": "npm --prefix front/athli-app run web",
+    "lint:front": "npm --prefix front/athli-app run lint"
+  }
+}

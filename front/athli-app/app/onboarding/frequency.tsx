@@ -54,7 +54,7 @@ export default function FrequencyScreen() {
       <View style={styles.footer}>
         <PrimaryButton
           title="Continuer"
-          onPress={() => router.push('/onboarding/summary')}
+          onPress={() => router.push('/onboarding/startdate')}
           style={styles.continueButton}
           disabled={!canContinue}
         />

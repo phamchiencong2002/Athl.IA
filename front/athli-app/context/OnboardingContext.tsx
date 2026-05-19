@@ -28,6 +28,9 @@ export interface OnboardingData {
     squats: number;
     plank: number;
   };
+  // Step 5 – Start date
+  startDate: 'today' | 'tomorrow' | 'next_week' | 'custom';
+  customStartDate: string; // ISO date string if startDate === 'custom'
 }
 
 const DEFAULT_DATA: OnboardingData = {
@@ -48,6 +51,8 @@ const DEFAULT_DATA: OnboardingData = {
   protectedZones: [],
   movementLimitations: [],
   baseline: { pushups: 25, squats: 50, plank: 60 },
+  startDate: 'today',
+  customStartDate: '',
 };
 
 interface ContextValue {
